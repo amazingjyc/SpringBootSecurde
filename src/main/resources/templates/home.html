@@ -1,0 +1,254 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Home</title>
+<link rel="stylesheet" media="screen" type="text/css"
+	th:href="@{/css/home.css}" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body class="body" style="background-color: #f6f6f6">
+	<div class="nav" th:id="${user}">
+		<ul>
+			<li><a class="active" th:href="@{/home}">Home</a></li>
+			<li><a th:href="@{/displaybooks}">Books</a></li>
+			<li><a th:href="@{/displayMagazines}">Magazines</a></li>
+			<li><a th:href="@{/displayTheses}">Theses</a></li>
+			<li><a th:href="@{/displayMeetingRooms}">Rooms</a></li>
+			<li><a th:href="@{/displayAuthors}">Authors</a></li>
+			<li><a th:href="@{/displayPublishers}">Publishers</a></li>
+			<li style="float: right"><a href="viewAccount"><span
+					th:text="${user.username}"></span></a>
+			<li style="float: right">
+				<form action="search">
+					<div class="input-group">
+						<input type="text" class="form-control" placeholder="Search"
+							name="search">
+						<div class="input-group-btn">
+							<button class="btn btn-default" type="submit">
+								<i class="glyphicon glyphicon-search"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</li>
+		</ul>
+	</div>
+
+	<div class="Part1">
+		<div class="container">
+			<h2 id="shsh2">WELCOME TO THE SHS ONLINE LIBRARY</h2>
+			<br></br>
+			<p id="shsDesc">In order to have a smooth reservation system, the
+				SHS Department has decided to set up an online library system which
+				allows the students and faculty members to reserve books or meeting
+				rooms online.</p>
+		</div>
+	</div>
+
+	<div class="dashboard">
+		<div class="container">
+			<div class="growin">
+				<a th:href="@{/displaybooks}">
+					<div class="column1">
+						<div class="container">
+							<div class="card">
+								<div class="card-image">
+									<div class="container">
+										<img class="img-responsive" th:src="@{/images/Book1.jpg}"
+											height="180" width="25%" ; style="float: left"> <img
+											class="img-responsive" th:src="@{/images/Book2.jpg}"
+											height="180" width="25%" ; style="float: left"> <img
+											class="img-responsive" th:src="@{/images/Book3.jpg}"
+											height="180" width="25%" ; style="float: left"> <img
+											class="img-responsive" th:src="@{/images/Book3.jpg}"
+											height="180" width="25%" ; style="float: left"> <span
+											class="card-title">Books</span>
+									</div>
+								</div>
+
+								<div class="card-action"></div>
+							</div>
+						</div>
+					</div>
+				</a>
+			</div>
+			<div class="growin">
+				<a th:href="@{/displayMagazines}">
+					<div class="column1">
+						<div class="container">
+							<div class="card">
+								<div class="card-image">
+									<div class="container">
+										<img class="img-responsive" th:src="@{/images/Mag1.jpg}"
+											height="180" width="25%" ; style="float: left"> <img
+											class="img-responsive" th:src="@{/images/Mag2.jpg}"
+											height="180" width="25%" ; style="float: left"> <img
+											class="img-responsive" th:src="@{/images/Mag3.jpg}"
+											height="180" width="25%" ; style="float: left"> <img
+											class="img-responsive" th:src="@{/images/Mag3.jpg}"
+											height="180" width="25%" ; style="float: left"> <span
+											class="card-title">Magazines</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</a>
+			</div>
+		</div>
+		<div class="container">
+			<div class="growin">
+				<a th:href="@{/displayTheses}">
+					<div class="column2">
+						<div class="container">
+							<div class="card">
+								<div class="card-image">
+									<div class="container">
+										<img class="img-responsive" th:src="@{/images/Thesis1.jpg}"
+											height="180" width="25%" ; style="float: left"> <img
+											class="img-responsive" th:src="@{/images/Thesis2.gif}"
+											height="180" width="25%" ; style="float: left"> <img
+											class="img-responsive" th:src="@{/images/Thesis3.bmp}"
+											height="180" width="25%" ; style="float: left"> <img
+											class="img-responsive" th:src="@{/images/Thesis3.bmp}"
+											height="180" width="25%" ; style="float: left"> <span
+											class="card-title">Theses</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</a>
+			</div>
+			<div class="growin">
+				<a th:href="@{/displayMeetingRooms}">
+					<div class="column2">
+						<div class="container">
+							<div class="card">
+								<div class="card-image">
+									<div class="container">
+										<img class="img-responsive"
+											th:src="@{/images/MeetingRoom.jpg}" height="180" width="70%"
+											; style="float: left"> <span class="card-title">Meeting
+											Rooms</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</a>
+			</div>
+		</div>
+		<div class="container">
+			<div class="growin">
+				<a th:href="@{/displayAuthors}">
+					<div class="column3">
+						<div class="container">
+							<div class="card">
+								<div class="card-image">
+									<div class="container">
+										<img class="img-responsive" th:src="@{/images/Author1.jpg}"
+											height="180" width="25%" ; style="float: left"> <img
+											class="img-responsive" th:src="@{/images/Author2.jpg}"
+											height="180" width="25%" ; style="float: left"> <img
+											class="img-responsive" th:src="@{/images/Author3.jpg}"
+											height="180" width="25%" ; style="float: left"> <img
+											class="img-responsive" th:src="@{/images/Author4.jpg}"
+											height="180" width="25%" ; style="float: left"> <span
+											class="card-title">Authors</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</a>
+			</div>
+			<div class="growin">
+				<a th:href="@{/displayPublishers}">
+					<div class="column3">
+						<div class="container">
+							<div class="card">
+								<div class="card-image">
+									<div class="container">
+										<img class="img-responsive" th:src="@{/images/Publisher1.jpg}"
+											height="180" width="25%" ; style="float: left"> <img
+											class="img-responsive" th:src="@{/images/Publisher2.jpg}"
+											height="180" width="25%" ; style="float: left"> <img
+											class="img-responsive" th:src="@{/images/Publisher3.png}"
+											height="180" width="25%" ; style="float: left"> <img
+											class="img-responsive" th:src="@{/images/Publisher4.png}"
+											height="180" width="25%" ; style="float: left"> <span
+											class="card-title">Publishers</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<br>
+	</br>
+
+	<div class="footer">
+		<div class="container">
+			<h2>SHS ONLINE LIBRARY SYSTEM</h2>
+			<br> </br>
+			<div class="column">
+				<h4>Quick links</h4>
+				<ul>
+					<li><a href="displaybooks">Books</a></li>
+					<li><a href="displaymagazines">Magazines</a></li>
+					<li><a href="displaytheses">Theses</a></li>
+					<li><a href="displaymeetingrooms">Meeting Rooms</a></li>
+					<li><a href="#">Tips</a></li>
+				</ul>
+			</div>
+			<div class="column">
+				<h4>Options</h4>
+				<ul>
+					<li><a href="#">About Us</a></li>
+					<li><a href="#">Contacts</a></li>
+					<li><a href="#">Terms & Condition</a></li>
+					<li><a href="#">Privacy Policy</a></li>
+				</ul>
+			</div>
+			<div class="column">
+				<h4>Follow Us</h4>
+				<ul>
+					<li><a href="#">Facebook</a></li>
+					<li><a href="#">Twitter</a></li>
+					<li><a href="#">Instagram</a></li>
+					<li><a href="#">RSS</a></li>
+				</ul>
+			</div>
+			<div class="column">
+				<h4>Newsletter</h4>
+				<p>Get on the latest updates on books, magazines, and theses</p>
+				<p>
+				<div class="input-group">
+					<input type="text" class="form-control" placeholder="Search for...">
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="button">
+							<span class="glyphicon glyphicon-envelope"></span>
+						</button>
+					</span>
+				</div>
+				<!-- /input-group -->
+				</p>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

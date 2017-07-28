@@ -1,0 +1,354 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>LibraryStaff</title>
+<link rel="stylesheet" media="screen" type="text/css"
+	th:href="@{/css/libraryStaff.css}" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+	function sendItemID(id) {
+		console.log(id);
+		var itemid = id;
+		$("#item_id").val(itemid);
+		$("#send1").submit();
+	}
+	function sendDeleteID(id) {
+		console.log(id);
+		var itemid = id;
+		$("#delete_id").val(itemid);
+		$("#deleteSend").submit();
+	}
+	function editItemID(id, itemName, author, publisher, yearPublished,
+			location,itemType) {
+		//var id = id;
+		//var itemName = itemName;
+		//var author = author;
+		//var publisher = publisher;
+		//var yearPublished = yearPublished;
+		//var location = location;
+		$("#id").val(id);
+		$("#itemName").val(itemName);
+		$("#author").val(author);
+		$("#publisher").val(publisher);
+		$("#yearPublished").val(yearPublished);
+		$("#location").val(location);
+		
+		if(itemType == 0){
+			$("#itemType").val('Book');
+		} else if(itemType == 1){
+			$("#itemType").val('Magazine');
+		} else if(itemType == 2){
+			$("#itemType").val('Thesis');
+		}
+		
+		$('#editItemModal').modal();
+	}
+</script>
+</head>
+
+<body class="body" style="background-color: #f6f6f6">
+	<form id="send1" th:action="@{/ViewItem}" method="POST">
+		<input type="hidden" name="item_id" id="item_id" /> <input
+			type="hidden" name="staff" id="staff" value="1" />
+	</form>
+	<form id="deleteSend" th:action="@{/deleteItem}" method="POST">
+		<input type="hidden" name="delete_id" id="delete_id" /> <input
+			type="hidden" name="staff" id="staff" value="1" />
+	</form>
+	<div class="nav">
+		<ul>
+			<li><a>DLSU ONLINE LIBRARY</a></li>
+			<li style="float: right"><a th:href="@{/logout}"><span>LogOut</span></a>
+		</ul>
+	</div>
+
+	<div class="Part1">
+		<div class="container">
+			<div class="category">
+				<h2 id="shsh2">Staff Page</h2>
+			</div>
+		</div>
+	</div>
+
+	<br>
+	</br>
+
+	<div class="items">
+		<div class="container">
+			<h2>Item List</h2>
+			<select class="itemsRightSide">
+				<option value="allItems">All Items</option>
+				<option value="books">Books</option>
+				<option value="magazines">Magazines</option>
+				<option value="theses">Theses</option>
+			</select> <label class="itemsRightSide">Filter By: &nbsp</label>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Item NAME</th>
+						<th>Author</th>
+						<th>Publisher</th>
+						<th>Item Type</th>
+						<th>STATUS</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item : ${items}">
+						<td th:text="${item.itemName}"></td>
+						<td th:text="${item.author}"></td>
+						<td th:text="${item.publisher}"></td>
+						<td><span th:if="${item.itemType} == 0">Book</span> <span
+							th:if="${item.itemType} == 1">Magazine</span> <span
+							th:if="${item.itemType} == 2">Thesis</span></td>
+						<td><span th:if="${item.itemStatus} == 0">Available</span> <span
+							th:if="${item.itemStatus} == 1">Borrowed</span></td>
+						<td>
+							<button type="button" class="btn btn-success"
+								th:onclick="'sendItemID(\''+ ${item.id} +'\');'">View</button>
+							<button th:if="${item.itemStatus} == 0" type="button"
+								class="btn btn-warning"
+								th:onclick="'editItemID(\''+ ${item.id} +'\',\''+ ${item.itemName} 
+												+'\',\''+ ${item.author} +'\',\''+ ${item.publisher} +'\',\''+ ${item.yearPublished}
+												 +'\',\''+ ${item.location} +'\',\''+ ${item.itemType} +'\');'"
+								data-target="#editItemModal">Edit</button>
+							<button th:if="${item.itemStatus} == 1" type="button"
+								class="btn btn-warning"
+								th:onclick="'editItemID(\''+ ${item.id} +'\',\''+ ${item.itemName} 
+												+'\',\''+ ${item.author} +'\',\''+ ${item.publisher} +'\',\''+ ${item.yearPublished}
+												 +'\',\''+ ${item.location} +'\');'"
+								disabled>Edit</button> <!-- Modal -->
+							<div id="editItemModal" class="modal fade" role="dialog"
+								data-toggle="modal">
+								<div class="modal-dialog">
+
+									<!-- Modal content-->
+									<div class="modal-content">
+										<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal">&times;</button>
+											<h3 class="modal-title">Edit Item Information:</h3>
+										</div>
+										<form th:action="@{/editItem}" method="POST">
+											<div id="editModal" class="modal-body">
+												<input type="hidden" name="id" id="id" /> <Label>Item
+													Name: &nbsp</Label> <input type="text" name="itemName"
+													id="itemName" /> <br> </br> <Label>Author: &nbsp</Label> <input
+													type="text" id="author" name="author" /> <br> </br> <Label>Publisher:
+													&nbsp</Label> <input type="text" id="publisher" name="publisher" />
+												<br> </br> <Label>Year Published: &nbsp</Label> <input
+													type="text" id="yearPublished" name="yearPublished" /> <br>
+												</br> <Label>Location: &nbsp</Label> <input type="text"
+													id="location" name="location" /> <br> </br> <Label>ItemType:
+													&nbsp</Label> <input type="text" id="itemType" name="itemType" />
+												<input type="hidden" name="staff" id="staff" value="1" />
+											</div>
+											<div class="modal-footer">
+												<input type="submit" class="btn btn-success"
+													value="Confirm Edit" />
+											</div>
+										</form>
+
+									</div>
+								</div>
+							</div>
+							<button th:if="${item.itemStatus} == 0"
+								th:onclick="'sendDeleteID(\''+ ${item.id} +'\');'" type="button"
+								class="btn btn-danger">Delete</button>
+							<button th:if="${item.itemStatus} == 1"
+								th:onclick="'sendDeleteID(\''+ ${item.id} +'\');'" type="button"
+								class="btn btn-danger" disabled>Delete</button> <!-- Modal --> <!--
+							<div id="deleteModal${item.itemid}" class="modal fade" role="dialog">
+								<div class="modal-dialog">
+							
+							    	<div class="modal-content">
+							      		<div class="modal-header">
+							        		<button type="button" class="close" data-dismiss="modal">&times;</button>
+							        		<h3 class="modal-title">Warning!</h3>
+							      		</div>
+							      		<div class="modal-body">
+							        		<p>Are you sure that you want to delete this item?</p>
+							      		</div>
+							      		<div class="modal-footer">
+								      		<form action="deleteitem" method="POST">
+												<input type="submit" name="displayitem" class="btn btn-danger" value="Confirm Delete"/>
+												<input type="hidden" name="itemID" value="${item.itemid}" />						
+											</form>
+							      		</div>
+							    	</div>
+							  	</div>
+							</div>
+							-->
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<br>
+	</br>
+
+	<div class="addItems">
+		<div class="container">
+			<h2>Add Items</h2>
+			<br> </br>
+			<form id="addItem" th:action="@{/addItem}" method="POST">
+				<label>Item Name: &nbsp</label> <input type="text" id="itemName"
+					name="itemName"></input> <label>Location: &nbsp</label> <input
+					type="text" id="location" name="location"></input> <label>Author:
+					&nbsp</label> <input type="text" id="author" name="author"></input> <br>
+				</br> <label>Publisher: &nbsp&nbsp&nbsp</label> <input id="publisher"
+					type="text" name="publisher"></input> <label>Year
+					Published: &nbsp&nbsp&nbsp</label> <input type="text" name="yearPublished"
+					id="yearPublished"></input> <label>Item Type: &nbsp</label> <select
+					id="itemType" name="itemType">
+					<option value="0">Book</option>
+					<option value="1">Magazine</option>
+					<option value="2">Thesis</option>
+					</br>
+					<br>
+					</br>
+					<input type="submit" class="btn btn-warning" style="float: right"
+					value="Add Item" />
+					<input type="hidden" name="staff" id="staff" value="1" />
+			</form>
+		</div>
+	</div>
+
+	<br>
+	</br>
+
+	<div class="items">
+		<div class="container">
+			<h2>Meeting Rooms List</h2>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Room Location</th>
+						<th>Start Time</th>
+						<th>End Time</th>
+						<th>Reserved By</th>
+						<th>Status</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="schedule : ${schedule1}">
+						<td>Room Number 1</td>
+						<td th:text="${schedule.startTime}"></td>
+						<td th:text="${schedule.endTime}"></td>
+						<td th:text="${schedule.username}"></td>
+						<td><span th:if="${schedule.status} == 0">Available</span> <span
+							th:if="${schedule.status} == 1">NOT Available</span></td>
+					</tr>
+					<tr th:each="schedule : ${schedule2}">
+						<td>Room Number 2</td>
+						<td th:text="${schedule.startTime}"></td>
+						<td th:text="${schedule.endTime}"></td>
+						<td th:text="${schedule.username}"></td>
+						<td><span th:if="${schedule.status} == 0">Available</span> <span
+							th:if="${schedule.status} == 1">NOT Available</span></td>
+					</tr>
+					<tr th:each="schedule : ${schedule3}">
+						<td>Room Number 3</td>
+						<td th:text="${schedule.startTime}"></td>
+						<td th:text="${schedule.endTime}"></td>
+						<td th:text="${schedule.username}"></td>
+						<td><span th:if="${schedule.status} == 0">Available</span> <span
+							th:if="${schedule.status} == 1">NOT Available</span></td>
+					</tr>
+					<tr th:each="schedule : ${schedule4}">
+						<td>Room Number 4</td>
+						<td th:text="${schedule.startTime}"></td>
+						<td th:text="${schedule.endTime}"></td>
+						<td th:text="${schedule.username}"></td>
+						<td><span th:if="${schedule.status} == 0">Available</span> <span
+							th:if="${schedule.status} == 1">NOT Available</span></td>
+					</tr>
+					<tr th:each="schedule : ${schedule5}">
+						<td>Room Number 5</td>
+						<td th:text="${schedule.startTime}"></td>
+						<td th:text="${schedule.endTime}"></td>
+						<td th:text="${schedule.username}"></td>
+						<td><span th:if="${schedule.status} == 0">Available</span> <span
+							th:if="${schedule.status} == 1">NOT Available</span></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<br>
+	</br>
+	<br>
+	</br>
+	<br>
+	</br>
+
+	<div class="footer">
+		<div class="container">
+			<h2>SHS ONLINE LIBRARY SYSTEM</h2>
+			<br> </br>
+			<div class="column">
+				<h4>Quick links</h4>
+				<ul>
+					<li><a href="displaybooks">Books</a></li>
+					<li><a href="displaymagazines">Magazines</a></li>
+					<li><a href="displaytheses">Theses</a></li>
+					<li><a href="displaymeetingrooms">Meeting Rooms</a></li>
+					<li><a href="#">Tips</a></li>
+				</ul>
+			</div>
+			<div class="column">
+				<h4>Options</h4>
+				<ul>
+					<li><a href="#">About Us</a></li>
+					<li><a href="#">Contacts</a></li>
+					<li><a href="#">Terms & Condition</a></li>
+					<li><a href="#">Privacy Policy</a></li>
+				</ul>
+			</div>
+			<div class="column">
+				<h4>Follow Us</h4>
+				<ul>
+					<li><a href="#">Facebook</a></li>
+					<li><a href="#">Twitter</a></li>
+					<li><a href="#">Instagram</a></li>
+					<li><a href="#">RSS</a></li>
+				</ul>
+			</div>
+			<div class="column">
+				<h4>Newsletter</h4>
+				<p>Get on the latest updates on books, magazines, and theses</p>
+				<p>
+				<div class="input-group">
+					<input type="text" class="form-control" placeholder="Search for...">
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="button">
+							<span class="glyphicon glyphicon-envelope"></span>
+						</button>
+					</span>
+				</div>
+				<!-- /input-group -->
+				</p>
+
+
+
+
+
+
+
+
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

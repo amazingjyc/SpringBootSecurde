@@ -1,0 +1,331 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Admin</title>
+<link rel="stylesheet" media="screen" type="text/css"
+	th:href="@{/css/admin.css}" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+	function sendUserID(id) {
+		console.log(id);
+		var userid = id;
+		$("#id").val(userid);
+		$("#send").submit();
+	}
+</script>
+
+</head>
+
+<body class="body" style="background-color: #f6f6f6">
+	<form id="send" th:action="@{/admin/unlockAccount}" method="POST">
+		<input type="hidden" name="id" id="id" />
+	</form>
+
+	<div class="nav">
+		<div class="nav">
+			<ul>
+				<li><a>DLSU ONLINE LIBRARY</a></li>
+				<li style="float: right"><a th:href="@{/logout}"><span>LogOut</span></a>
+			</ul>
+		</div>
+	</div>
+
+	<div class="Part1">
+		<div class="container">
+			<div class="category">
+				<h2 id="shsh2">Administration Page</h2>
+				<br> </br>
+				<p>Click the "Export" button below to export an excel sheet/XML
+					of the status of all books and meeting rooms.</p>
+				<button class="btn btn-warning">Export</button>
+			</div>
+		</div>
+	</div>
+
+	<br>
+	</br>
+	<div class="logs">
+		<div class="container">
+			<h2>Logs</h2>
+			<select class="logsRightSide">
+				<option value="author">All 12 Months</option>
+				<option value="author">January</option>
+				<option value="publisher">February</option>
+				<option value="title">March</option>
+				<option value="title">April</option>
+				<option value="title">May</option>
+				<option value="title">June</option>
+				<option value="title">July</option>
+				<option value="title">August</option>
+				<option value="title">September</option>
+				<option value="title">October</option>
+				<option value="title">November</option>
+				<option value="title">December</option>
+			</select> <label class="logsRightSide">View By Month: &nbsp</label>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>TransactionID</th>
+						<th>Description</th>
+						<th>Account Name</th>
+						<th>Date</th>
+						<th>Time</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>1</td>
+						<td>Checkout 5 Books, 2 Magazines, 1 Thesis.</td>
+						<td>AMAZINGJYC</td>
+						<td>January 1, 2017</td>
+						<td>1:00</td>
+					</tr>
+					<tr>
+						<td>1</td>
+						<td>Checkout 5 Books, 2 Magazines, 1 Thesis.</td>
+						<td>AMAZINGJYC</td>
+						<td>January 1, 2017</td>
+						<td>1:00</td>
+					</tr>
+					<tr>
+						<td>1</td>
+						<td>Checkout 5 Books, 2 Magazines, 1 Thesis.</td>
+						<td>AMAZINGJYC</td>
+						<td>January 1, 2017</td>
+						<td>1:00</td>
+					</tr>
+					<tr>
+						<td>1</td>
+						<td>Checkout 5 Books, 2 Magazines, 1 Thesis.</td>
+						<td>AMAZINGJYC</td>
+						<td>January 1, 2017</td>
+						<td>1:00</td>
+					</tr>
+					<tr>
+						<td>1</td>
+						<td>Checkout 5 Books, 2 Magazines, 1 Thesis.</td>
+						<td>AMAZINGJYC</td>
+						<td>January 1, 2017</td>
+						<td>1:00</td>
+					</tr>
+					<tr>
+						<td>1</td>
+						<td>Checkout 5 Books, 2 Magazines, 1 Thesis.</td>
+						<td>AMAZINGJYC</td>
+						<td>January 1, 2017</td>
+						<td>1:00</td>
+					</tr>
+					<tr>
+						<td>1</td>
+						<td>Checkout 5 Books, 2 Magazines, 1 Thesis.</td>
+						<td>AMAZINGJYC</td>
+						<td>January 1, 2017</td>
+						<td>1:00</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<br>
+	</br>
+
+	<div class="accounts">
+		<div class="container">
+			<h2>Account List</h2>
+			<select class="accountsRightSide">
+				<option value="author">All User Accounts</option>
+				<option value="author">Account Type</option>
+				<option value="publisher">Newest to Oldest</option>
+				<option value="title">Oldest to Newest</option>
+			</select> <label class="accountsRightSide">Sort By: &nbsp</label>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>UserName</th>
+						<th>Password</th>
+						<th>Email</th>
+						<th>Type</th>
+						<th>ID Number</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="user : ${users}">
+						<td th:text="${user.username}"></td>
+						<td th:text="${user.password}"></td>
+						<td th:text="${user.email}"></td>
+						<td><span th:if="${user.accountType} == 2">Student</span> <span
+							th:if="${user.accountType} == 1">Faculty</span></td>
+						<td th:text="${user.studentEmployeeNumber}"></td>
+						<td>
+							<button th:if="${user.locked} == 1" type="button"
+								class="btn btn-success"
+								th:onclick="'sendUserID(\''+ ${user.id} +'\');'">Unlock</button>
+							<button th:if="${user.locked} == 0" type="button"
+								class="btn btn-success" disabled>Unlock</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<br>
+	</br>
+
+	<div class="staff">
+		<div class="container">
+			<h2>Library Staff List</h2>
+			<select class="staffRightSide">
+				<option value="author">All Staff Accounts</option>
+				<option value="publisher">Newest to Oldest</option>
+				<option value="title">Oldest to Newest</option>
+			</select> <label class="staffRightSide">Sort By: &nbsp</label>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Email</th>
+						<th>UserName</th>
+						<th>Password</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tr th:each="user : ${staffs}">
+					<td th:text="${user.email}"></td>
+					<td th:text="${user.username}"></td>
+					<td th:text="${user.password}"></td>
+					<td th:text="${user.email}"></td>
+					<td>
+						<button th:if="${user.locked} == 1" type="button"
+							class="btn btn-success"
+							th:onclick="'sendUserID(\''+ ${user.id} +'\');'">Unlock</button>
+						<button th:if="${user.locked} == 0" type="button"
+							class="btn btn-success" disabled>Unlock</button>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<br>
+	</br>
+
+	<div class="staff">
+		<div class="container">
+			<h2>Library Manager List</h2>
+			<select class="staffRightSide">
+				<option value="author">All Manager Accounts</option>
+				<option value="publisher">Newest to Oldest</option>
+				<option value="title">Oldest to Newest</option>
+			</select> <label class="staffRightSide">Sort By: &nbsp</label>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Email</th>
+						<th>UserName</th>
+						<th>Password</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tr th:each="user : ${managers}">
+					<td th:text="${user.email}"></td>
+					<td th:text="${user.username}"></td>
+					<td th:text="${user.password}"></td>
+					<td th:text="${user.email}"></td>
+					<td>
+						<button th:if="${user.locked} == 1" type="button"
+							class="btn btn-success"
+							th:onclick="'sendUserID(\''+ ${user.id} +'\');'">Unlock</button>
+						<button th:if="${user.locked} == 0" type="button"
+							class="btn btn-success" disabled>Unlock</button>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<br>
+	</br>
+
+	<div class="addStaff">
+		<div class="container">
+			<h2>Add Staff</h2>
+			<br> </br>
+			<form th:action="@{/admin/addStaff}" method="Post">
+				<label>Email: &nbsp</label> <input type="text" name="email"
+					id="email" required="required"></input> <label>Username:
+					&nbsp</label> <input type="text" id="username" name="username"
+					required="required"></input> <label>Password: &nbsp</label> <input
+					type="password" name="password" required="required"></input> <label>Position:
+					&nbsp</label> <select name="userType" id="userType">
+					<option value="2">Manager</option>
+					<option value="3">Staff</option>
+				</select> <br> </br> <br> </br>
+				<button type="submit" class="btn btn-warning" style="float: right">Create
+					Account</button>
+			</form>
+		</div>
+	</div>
+
+	<br>
+	</br>
+	<br>
+	</br>
+
+	<div class="footer">
+		<div class="container">
+			<h2>SHS ONLINE LIBRARY SYSTEM</h2>
+			<br> </br>
+			<div class="column">
+				<h4>Quick links</h4>
+				<ul>
+					<li><a href="displaybooks">Books</a></li>
+					<li><a href="displaymagazines">Magazines</a></li>
+					<li><a href="displaytheses">Theses</a></li>
+					<li><a href="displaymeetingrooms">Meeting Rooms</a></li>
+					<li><a href="#">Tips</a></li>
+				</ul>
+			</div>
+			<div class="column">
+				<h4>Options</h4>
+				<ul>
+					<li><a href="#">About Us</a></li>
+					<li><a href="#">Contacts</a></li>
+					<li><a href="#">Terms & Condition</a></li>
+					<li><a href="#">Privacy Policy</a></li>
+				</ul>
+			</div>
+			<div class="column">
+				<h4>Follow Us</h4>
+				<ul>
+					<li><a href="#">Facebook</a></li>
+					<li><a href="#">Twitter</a></li>
+					<li><a href="#">Instagram</a></li>
+					<li><a href="#">RSS</a></li>
+				</ul>
+			</div>
+			<div class="column">
+				<h4>Newsletter</h4>
+				<p>Get on the latest updates on books, magazines, and theses</p>
+				<p>
+				<div class="input-group">
+					<input type="text" class="form-control" placeholder="Search for...">
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="button">
+							<span class="glyphicon glyphicon-envelope"></span>
+						</button>
+					</span>
+				</div>
+				<!-- /input-group -->
+				</p>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

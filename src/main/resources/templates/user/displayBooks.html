@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>BooksCatalog</title>
+<link rel="stylesheet" media="screen" type="text/css"
+	th:href="@{/css/displayBooks.css}" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+	function sendItemID(id) {
+		console.log(id);
+		var itemid = id;
+		$("#id").val(itemid);
+		$("#send").submit();
+	}
+</script>
+
+</head>
+
+<body class="body" style="background-color: #f6f6f6">
+	<form id="send" th:action="@{/user/viewItem}" method="POST">
+		<input type="hidden" name="id" id="id" />
+	</form>
+
+	<div class="nav">
+		<ul>
+			<li><a th:href="@{/user/home}">Home</a></li>
+			<li><a class="active" th:href="@{/user/displaybooks}">Books</a></li>
+			<li><a th:href="@{/user/displayMagazines}">Magazines</a></li>
+			<li><a th:href="@{/user/displayTheses}">Theses</a></li>
+			<li><a th:href="@{/user/displayMeetingRooms}">Rooms</a></li>
+			<li><a th:href="@{/user/displayAuthors}">Authors</a></li>
+			<li><a th:href="@{/user/displayPublishers}">Publishers</a></li>
+			<li style="float: right"><a th:href="@{/user/viewAccount}"><span
+					th:text="${user.username}"></span></a>
+			<li style="float: right">
+				<form action="search" th:action="@{/user/resultsPage}" method="POST">
+					<div class="input-group">
+						<input type="text" id="keyWord" class="form-control" placeholder="Search"
+							name="keyWord">
+						<div class="input-group-btn">
+							<button class="btn btn-default" type="submit">
+								<i class="glyphicon glyphicon-search"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</li>
+		</ul>
+	</div>
+
+	<div class="Part1">
+		<div class="container">
+			<div class="category">
+				<h2 id="shsh2">Choose A Category</h2>
+				<br> </br> <label for="sortBy">Sort By:</label> <select>
+					<option value="author">Author</option>
+					<option value="publisher">Publisher</option>
+					<option value="title">Title</option>
+				</select>
+			</div>
+		</div>
+	</div>
+	<br>
+	</br>
+	
+	<div class="container">
+		<div class="row">
+			<div th:each="item : ${books}">
+				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+					<span style="cursor: pointer">
+						<div class="my-list"
+							th:onclick="'sendItemID(\''+ ${item.id} +'\');'">
+							<img th:src="@{/images/Book1.jpg}" height="180" />
+							<h3 th:text="${item.itemName}"></h3>
+							<span th:text="${item.author}"></span> <span class="pull-right"
+								th:text="${item.yearPublished}"></span>
+						</div>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div>
+		<div class="container">
+			<div class="pagination">
+				<a href="#">&laquo;</a> <a class="active" href="#">1</a> <a href="#">2</a>
+				<a href="#">3</a> <a href="#">4</a> <a href="#">5</a> <a href="#">6</a>
+				<a href="#">&raquo;</a>
+			</div>
+		</div>
+	</div>
+	<br>
+	</br>
+
+	<div class="footer">
+		<div class="container">
+			<h2>SHS ONLINE LIBRARY SYSTEM</h2>
+			<br> </br>
+			<div class="column">
+				<h4>Quick links</h4>
+				<ul>
+					<li><a href="displaybooks">Books</a></li>
+					<li><a href="displaymagazines">Magazines</a></li>
+					<li><a href="displaytheses">Theses</a></li>
+					<li><a href="displaymeetingrooms">Meeting Rooms</a></li>
+					<li><a href="#">Tips</a></li>
+				</ul>
+			</div>
+			<div class="column">
+				<h4>Options</h4>
+				<ul>
+					<li><a href="#">About Us</a></li>
+					<li><a href="#">Contacts</a></li>
+					<li><a href="#">Terms & Condition</a></li>
+					<li><a href="#">Privacy Policy</a></li>
+				</ul>
+			</div>
+			<div class="column">
+				<h4>Follow Us</h4>
+				<ul>
+					<li><a href="#">Facebook</a></li>
+					<li><a href="#">Twitter</a></li>
+					<li><a href="#">Instagram</a></li>
+					<li><a href="#">RSS</a></li>
+				</ul>
+			</div>
+			<div class="column">
+				<h4>Newsletter</h4>
+				<p>Get on the latest updates on books, magazines, and theses</p>
+				<p><div class="input-group">
+					<input type="text" class="form-control" placeholder="Search for...">
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="button">
+							<span class="glyphicon glyphicon-envelope"></span>
+						</button>
+					</span>
+				</div>
+				<!-- /input-group --></p>
+
+
+
+
+
+
+
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

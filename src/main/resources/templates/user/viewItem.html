@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>ViewItem</title>
+<link rel="stylesheet" media="screen" type="text/css"
+	th:href="@{/css/viewItem.css}" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+	function sendReservation(dateNow,dateNextWeek) {
+		console.log(dateNow+" "+dateNextWeek);
+		var dateNow = dateNow;
+		var dateNextWeek = dateNextWeek;
+		$("#status").val(3);
+		$("#borrowDate").val(dateNow);
+		$("#returnDate").val(dateNextWeek);
+		$("#send").submit();
+	}
+</script>
+
+
+</head>
+
+<body class="body" style="background-color: #f6f6f6">
+	<form id="send" th:object="${itemReservation}" th:action="@{/user/processCart}" method="POST">
+		<input type="hidden" name="item_id" id="item_id"  th:value="${item.id}"  />
+		<input type="hidden" name="user_id" id="user_id"  th:value="${user.id}" />
+		<input type="hidden" name="status" id="status" />
+		<input type="hidden" name="borrowDate" id="borrowDate" />
+		<input type="hidden" name="returnDate" id="returnDate" />
+	</form>
+	
+	<div class="nav">
+		<ul>
+			<li><a th:href="@{/user/home}">Home</a></li>
+			<li><a th:href="@{/user/displaybooks}">Books</a></li>
+			<li><a th:href="@{/user/displayMagazines}">Magazines</a></li>
+			<li><a th:href="@{/user/displayTheses}">Theses</a></li>
+			<li><a th:href="@{/user/displayMeetingRooms}">Rooms</a></li>
+			<li><a th:href="@{/user/displayAuthors}">Authors</a></li>
+			<li><a th:href="@{/user/displayPublishers}">Publishers</a></li>
+			<li style="float: right"><a th:href="@{/user/viewAccount}"><span
+					th:text="${user.username}"></span></a>
+			<li style="float: right">
+				<form action="search" th:action="@{/user/resultsPage}" method="POST">
+					<div class="input-group">
+						<input type="text" id="keyWord" class="form-control" placeholder="Search"
+							name="keyWord">
+						<div class="input-group-btn">
+							<button class="btn btn-default" type="submit">
+								<i class="glyphicon glyphicon-search"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</li>
+		</ul>
+	</div>
+
+	<div class="Part1">
+		<div class="container">
+			<div class="category">
+				<h2 id="shsh2">Item Information</h2>
+				<br> </br>
+				<div class="leftPart1" th:id="${item}">
+					<img th:src="@{/images/Book2.jpg}" height="400" width="350" />
+				</div>
+				<div class="rightPart1">
+					<label>Title: <span th:text="${item.itemName}"></span></label> <br>
+					</br> <label>Location: <span th:text="${item.location}"></span></label>
+					<br> </br> <label>Author: <span th:text="${item.author}"></span></label>
+					<br> </br> <label>Publisher: <span
+						th:text="${item.publisher}"></span></label> <br> </br> <label>Year
+						published: <span th:text="${item.yearPublished}"></span>
+					</label> <br> </br> <label>Tag(s): <!--<c:forEach items="${tags}" var="tag" > ${tag}</c:forEach>
+						-->
+					</label> <br> </br> <br> </br> <br> </br>						
+						
+				<label>
+					<span th:if="${status} == 1" class="label label-success">STATUS: AVAILABLE</span>
+					<br></br>
+					<button  th:if="${status} == 1" type="button" class="btn btn-warning" data-toggle="modal"
+						data-target="#addItemModal">Reserve</button>
+				</label>
+				<label>
+					<span th:if="${status} == 2" class="label label-danger">STATUS: NOT AVAILABLE</span>
+					<br></br>
+					<span th:if="${status} == 2" class="label label-danger">Expected Date of Availability: <span th:text="${returnDate}"></span></span>
+				</label>
+				<label>
+					<span th:if="${status} == 3" class="label label-warning">STATUS: AVAILABLE, NOTE: ALREADY IN SOMEONE'S RESERVE CART</span>
+					<br></br>
+					<button th:if="${status} == 3" type="button" class="btn btn-warning" data-toggle="modal"
+						data-target="#addItemModal">Reserve</button>
+				</label>
+				<label>
+					<span th:if="${status} == 4" class="label label-info">STATUS: ALREADY IN CART</span>
+				</label>
+				<label>
+					<span th:if="${status} == 5" class="label label-danger">STATUS: YOU ARE CURRENTLY BORROWING THIS ITEM</span>
+					<br></br>
+					<span th:if="${status} == 5" class="label label-danger">Please Return By: <span th:text="${returnDate}"></span></span>
+				</label>
+				<br></br>
+				<br></br>
+					<!-- Modal -->
+					<div id="addItemModal" class="modal fade" role="dialog">
+						<div class="modal-dialog">
+
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+									<h3 class="modal-title">Note</h3>
+								</div>
+								<div class="modal-body">
+									<p>You are about to add Item: <span th:text="${item.itemName}"></span> into your reserve cart.</p>
+									<br></br>
+									<p>Note:</p>
+									<p>Reserve Date: <span th:text="${dateNow}"></span></p>
+									<p>Expected Return Date: <span th:text="${dateNextWeek}"></span></p>
+								</div>
+								<div class="modal-footer">
+									<input type="submit" th:onclick="'sendReservation(\''+ ${dateNow} +'\',\''+ ${dateNextWeek} +'\');'" 
+											name="addToCartContinue" class="btn btn-success"
+											style="float: right" value="Confirm Reservation" /> 
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<br>
+	</br>
+
+	<div class="reviewSection">
+		<div class="container">
+			<h2 class="page-header">Reviews</h2>
+			<div class="reviews">
+				<div th:each="review : ${reviews}">
+					<article class="row">
+					<div class="col-md-2 col-sm-2 hidden-xs">
+						<figure class="thumbnail"> <img class="img-responsive"
+							src="http://www.keita-gaming.com/assets/profile/default-avatar-c5d8ec086224cb6fc4e395f4ba3018c2.jpg" />
+						<figcaption class="text-center"><span th:text="${review.reviewer}"></span></figcaption> </figure>
+					</div>
+					<div class="col-md-10 col-sm-10">
+						<div class="panel panel-default arrow left">
+							<div class="panel-body">
+								<header class="text-left">
+								<div class="comment-post">
+									<span th:text="${review.review}"></span>
+								</div>
+							</div>
+						</div>
+					</div>
+					</article>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div>
+		<div class="container">
+			<div class="pagination">
+				<a href="#">&laquo;</a> <a class="active" href="#">1</a> <a href="#">2</a>
+				<a href="#">3</a> <a href="#">4</a> <a href="#">5</a> <a href="#">6</a>
+				<a href="#">&raquo;</a>
+			</div>
+		</div>
+	</div>
+
+	<br>
+	</br>
+	<br>
+	</br>
+
+	<div class="footer">
+		<div class="container">
+			<h2>SHS ONLINE LIBRARY SYSTEM</h2>
+			<br> </br>
+			<div class="column">
+				<h4>Quick links</h4>
+				<ul>
+					<li><a href="displaybooks">Books</a></li>
+					<li><a href="displaymagazines">Magazines</a></li>
+					<li><a href="displaytheses">Theses</a></li>
+					<li><a href="displaymeetingrooms">Meeting Rooms</a></li>
+					<li><a href="#">Tips</a></li>
+				</ul>
+			</div>
+			<div class="column">
+				<h4>Options</h4>
+				<ul>
+					<li><a href="#">About Us</a></li>
+					<li><a href="#">Contacts</a></li>
+					<li><a href="#">Terms & Condition</a></li>
+					<li><a href="#">Privacy Policy</a></li>
+				</ul>
+			</div>
+			<div class="column">
+				<h4>Follow Us</h4>
+				<ul>
+					<li><a href="#">Facebook</a></li>
+					<li><a href="#">Twitter</a></li>
+					<li><a href="#">Instagram</a></li>
+					<li><a href="#">RSS</a></li>
+				</ul>
+			</div>
+			<div class="column">
+				<h4>Newsletter</h4>
+				<p>Get on the latest updates on books, magazines, and theses</p>
+				<p>
+				<div class="input-group">
+					<input type="text" class="form-control" placeholder="Search for...">
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="button">
+							<span class="glyphicon glyphicon-envelope"></span>
+						</button>
+					</span>
+				</div>
+				<!-- /input-group -->
+				</p>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
