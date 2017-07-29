@@ -17,10 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import edu.dlsu.securde.model.Item;
 import edu.dlsu.securde.model.ItemReservation;
@@ -108,6 +110,7 @@ public class WebController {
 
 			// Add the new user to the database..
 			user.setUserType(4);
+			//user.setUserType(1);
 			registrationService.addUser(user);
 			System.out.println("New user created!");
 			modelAndView.setViewName("login");
@@ -1960,6 +1963,21 @@ public class WebController {
 				+ " tried to access unauthorized webpage/content. User is blocked from accessing the content.");
 
 		modelAndView.setViewName("access-denied");
+		return modelAndView;
+	}
+	
+	@ExceptionHandler(NoHandlerFoundException.class)
+	public ModelAndView exceptionHandling() {
+		ModelAndView modelAndView = new ModelAndView();
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println(auth.getName());
+
+		User user = userService.getUser(auth.getName()).get(0);
+
+		loggingService.logInfo("Username: " + user.getUsername()
+				+ " has accessed an error URL");
+
+		modelAndView.setViewName("/startUp");
 		return modelAndView;
 	}
 }

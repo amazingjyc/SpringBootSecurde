@@ -44,6 +44,11 @@ public class RegistrationService {
 			user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 			 Role userRole = roleRepository.findByRole("STAFF");
 		     user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
+		} // Role is ADMIN
+		else if(user.getUserType()==1){
+			user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+			 Role userRole = roleRepository.findByRole("ADMIN");
+		     user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
 		}
 		userRepository.save(user);
 	}
