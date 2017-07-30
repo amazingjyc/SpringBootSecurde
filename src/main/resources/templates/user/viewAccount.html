@@ -18,7 +18,8 @@
 		console.log(id);
 		var id = id;
 		$("#item_id").val(id);
-		var review = document.getElementById('reviewMessage').value;
+		var review = document.getElementById(id).value;
+		console.log(review);
 		$("#review").val(review);
 		$("#send").submit();
 	}
@@ -27,8 +28,8 @@
 
 <body class="body" style="background-color: #f6f6f6">
 	<form id="send" th:action="@{/user/processReview}" method="POST">
-		<input type="hidden" name="item_id" id="item_id" /> <input
-			type="hidden" name="review" id="review" />
+		<input type="hidden" name="item_id" id="item_id" /> 
+		<input type="hidden" name="review" id="review" />
 	</form>
 	<div class="nav">
 		<ul>
@@ -100,12 +101,12 @@
 						<td th:text="${itemReservation.borrowDate}"></td>
 						<td th:text="${itemReservation.returnDate}"></td>
 						<td><input th:if="${itemReservation.can_review} == 1"
-							type="text" name="reviewMessage" id="reviewMessage" />&nbsp
+							type="text" th:name="${itemReservation.item_id}" th:id="${itemReservation.item_id}" />&nbsp
 							<button th:if="${itemReservation.can_review} == 1"
 								class="btn btn-success"
 								th:onclick="'sendID(\''+ ${itemReservation.item_id} +'\');'">Review</button>
 							<input th:if="${itemReservation.can_review} == 0" type="text"
-							name="reviewMessage" id="reviewMessage" disabled />&nbsp
+							disabled />&nbsp
 							<button th:if="${itemReservation.can_review} == 0"
 								class="btn btn-success"
 								th:onclick="'sendID(\''+ ${itemReservation.item_id} +'\');'"

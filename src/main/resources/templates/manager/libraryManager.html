@@ -34,12 +34,13 @@
 		//var publisher = publisher;
 		//var yearPublished = yearPublished;
 		//var location = location;
+		
 		$("#id").val(id);
 		$("#itemName").val(itemName);
 		$("#author").val(author);
 		$("#publisher").val(publisher);
 		$("#yearPublished").val(yearPublished);
-		$("#location").val(location);
+		$("#locationName").val(location);
 
 		if (itemType == 0) {
 			$("#itemType").val('Book');
@@ -174,7 +175,7 @@
 												<br> </br> <Label>Year Published: &nbsp</Label> <input
 													type="text" id="yearPublished" name="yearPublished" /> <br>
 												</br> <Label>Location: &nbsp</Label> <input type="text"
-													id="location" name="location" /> <br> </br> <Label>ItemType:
+													id="locationName" name="locationName" /> <br> </br> <Label>ItemType:
 													&nbsp</Label> <input type="text" id="itemType" name="itemType" />
 												<input type="hidden" name="staff" id="staff" value="0" />
 											</div>
