@@ -36,6 +36,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		}
 		else{
 			loggingService.logInfo(user.getUsername()+ "successfully logged in to homepage.");
+			//Reset wrong attempts..
+			user.setWrongAttempts(0);
+			userService.updateUser(user);
 			response.sendRedirect("/startUp");
 		}
 	}

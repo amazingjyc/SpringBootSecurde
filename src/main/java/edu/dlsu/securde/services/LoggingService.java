@@ -13,7 +13,7 @@ public class LoggingService {
 		log.info(message);
 	}
 	
-	public static void logError(String message){
+	public void logError(String message){
 		log.error(message);
 	}
 }

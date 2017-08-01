@@ -11,6 +11,7 @@ import java.util.ArrayList;
 //import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.NoHandlerFoundException;
 
 import edu.dlsu.securde.model.Item;
 import edu.dlsu.securde.model.ItemReservation;
@@ -110,7 +110,7 @@ public class WebController {
 
 			// Add the new user to the database..
 			user.setUserType(4);
-			//user.setUserType(1);
+			// user.setUserType(1);
 			registrationService.addUser(user);
 			System.out.println("New user created!");
 			modelAndView.setViewName("login");
@@ -255,7 +255,7 @@ public class WebController {
 			// Staff and Managers..
 			modelAndView.addObject("managers", userService.findByUserType(2));
 			modelAndView.addObject("staffs", userService.findByUserType(3));
-			
+
 			loggingService.logInfo("Redirecting user: " + user.getUsername() + " to admin page.");
 			modelAndView.setViewName("admin/admin");
 		} else if (user.getUserType() == 2 || user.getUserType() == 3) {
@@ -1033,6 +1033,9 @@ public class WebController {
 		modelAndView.addObject("cartItems", cartItems);
 		modelAndView.addObject("itemReservation", new ItemReservation());
 
+		modelAndView.addObject("roomTransactions",
+				roomReservationService.getRoomReservationsByUsername(user.getUsername()));
+		modelAndView.addObject("room", new ItemReservation());
 		modelAndView.setViewName("user/viewAccount");
 		loggingService.logInfo("Username " + user.getUsername() + " added a review for item id: " + item_id);
 		return modelAndView;
@@ -1965,9 +1968,9 @@ public class WebController {
 		modelAndView.setViewName("access-denied");
 		return modelAndView;
 	}
-	
-	@ExceptionHandler(NoHandlerFoundException.class)
-	public ModelAndView exceptionHandling() {
+
+	@RequestMapping(value = { "/goBack" }, method = RequestMethod.GET)
+	public ModelAndView goBack() {
 		ModelAndView modelAndView = new ModelAndView();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		System.out.println(auth.getName());
@@ -1975,9 +1978,146 @@ public class WebController {
 		User user = userService.getUser(auth.getName()).get(0);
 
 		loggingService.logInfo("Username: " + user.getUsername()
-				+ " has accessed an error URL");
+				+ " tried to access unauthorized webpage/content. User is blocked from accessing the content.");
 
-		modelAndView.setViewName("/startUp");
+		if (user.getUserType() == 1) {
+			// Students/Faculty..
+			List<User> users = userService.findByUserType(4);
+			modelAndView.addObject("users", users);
+			modelAndView.addObject("user", new User());
+
+			// Staff and Managers..
+			modelAndView.addObject("managers", userService.findByUserType(2));
+			modelAndView.addObject("staffs", userService.findByUserType(3));
+			modelAndView.setViewName("admin/admin");
+			loggingService.logInfo("Redirecting user back to the admin page.");
+		} else if (user.getUserType() == 2 || user.getUserType() == 3) {
+			modelAndView.addObject("items", itemService.getAllItems());
+			modelAndView.addObject("item", new Item());
+
+			// Set the meeting rooms schedule..
+			// Only show schedule for tomorrow..
+
+			// Get Today's date..
+			LocalDate today = LocalDate.now();
+			today = today.plus(1, ChronoUnit.DAYS);
+			String tomorrow = today + "";
+
+			// Check if there are roomReservations for tomorrow..
+			if (roomReservationService.getRoomReservationsByDate(tomorrow).size() > 0) {
+
+				// Check room by room.. 5 Rooms total..
+				System.out.println("Checking Rooms.");
+
+				// Room1
+				List<Schedule> schedules1 = new ArrayList<Schedule>();
+				modelAndView.addObject("schedule1", meetingRoomsService.processSchedule(schedules1, "RoomNumber1"));
+				// Room2
+				List<Schedule> schedules2 = new ArrayList<Schedule>();
+				modelAndView.addObject("schedule2", meetingRoomsService.processSchedule(schedules2, "RoomNumber2"));
+				// Room3
+				List<Schedule> schedules3 = new ArrayList<Schedule>();
+				modelAndView.addObject("schedule3", meetingRoomsService.processSchedule(schedules3, "RoomNumber3"));
+				// Room4
+				List<Schedule> schedules4 = new ArrayList<Schedule>();
+				modelAndView.addObject("schedule4", meetingRoomsService.processSchedule(schedules4, "RoomNumber4"));
+				// Room5
+				List<Schedule> schedules5 = new ArrayList<Schedule>();
+				modelAndView.addObject("schedule5", meetingRoomsService.processSchedule(schedules5, "RoomNumber5"));
+
+			}
+			// All rooms available
+			else {
+
+				System.out.println("All rooms are available.");
+
+				List<Schedule> schedule1 = new ArrayList<Schedule>();
+				List<Schedule> schedule2 = new ArrayList<Schedule>();
+				List<Schedule> schedule3 = new ArrayList<Schedule>();
+				List<Schedule> schedule4 = new ArrayList<Schedule>();
+				List<Schedule> schedule5 = new ArrayList<Schedule>();
+				// Set to available from 9AM to 8PM..
+				Integer startTime = 9;
+				Integer endTime = 10;
+				String amPmS = " AM";
+				String amPmE = " AM";
+				for (int i = 0; i < 12; i++) {
+					Schedule schedule = new Schedule();
+					schedule.setStartTime(startTime + amPmS);
+					schedule.setEndTime(endTime + amPmE);
+					schedule.setStatus(0);
+					schedule.setUsername("None");
+					schedule1.add(schedule);
+					schedule2.add(schedule);
+					schedule3.add(schedule);
+					schedule4.add(schedule);
+					schedule5.add(schedule);
+
+					// Adjust the time slots..
+					startTime += 1;
+					if (startTime == 13) {
+						startTime = 1;
+					}
+					endTime += 1;
+					if (endTime == 13) {
+						endTime = 1;
+					}
+					if (startTime == 12) {
+						amPmS = " PM";
+					}
+					if (endTime == 12) {
+						amPmE = " PM";
+					}
+				}
+				modelAndView.addObject("schedule1", schedule1);
+				modelAndView.addObject("schedule2", schedule2);
+				modelAndView.addObject("schedule3", schedule3);
+				modelAndView.addObject("schedule4", schedule4);
+				modelAndView.addObject("schedule5", schedule5);
+			}
+
+			modelAndView.addObject("schedule", new Schedule());
+			if (user.getUserType() == 2) {
+				modelAndView.setViewName("manager/libraryManager");
+
+				loggingService.logInfo("Redirecting user back to the manager page.");
+			} else {
+				modelAndView.setViewName("staff/libraryStaff");
+				loggingService.logInfo("Redirecting user back to the staff page.");
+			}
+		} else if (user.getUserType() == 4) {
+			modelAndView.addObject("user", user);
+			modelAndView.setViewName("user/home");
+			loggingService.logInfo("Redirecting user back to the home page.");
+		}
 		return modelAndView;
 	}
+
+	@ExceptionHandler(Exception.class)
+	public ModelAndView handleError(HttpServletRequest req, Exception ex) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println(auth.getName());
+
+		User user = userService.getUser(auth.getName()).get(0);
+		loggingService.logInfo("Username: " + user.getUsername()
+		+ " experienced webpage crashing. Either server side or page not found or others. User is redirected to the error page.");
+
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("exception", ex);
+		mav.addObject("url", req.getRequestURL());
+		mav.setViewName("error");
+		return mav;
+	}
+	
+//	@RequestMapping(value = { "/error" }, method = RequestMethod.GET)
+//	public ModelAndView error() {
+//		ModelAndView modelAndView = new ModelAndView();
+//		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//		System.out.println(auth.getName());
+//
+//		User user = userService.getUser(auth.getName()).get(0);
+//
+//		modelAndView.setViewName("error");
+//		return modelAndView;
+//	}
 }

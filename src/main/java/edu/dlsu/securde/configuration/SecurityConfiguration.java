@@ -58,6 +58,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/login").permitAll()
 				.antMatchers("/registration").permitAll()
 				.antMatchers("/loginLocked").permitAll()
+				.antMatchers("/error").permitAll()
 				.antMatchers("/user/**").hasAuthority("USER")
 				.antMatchers("/admin/**").hasAuthority("ADMIN")
 				.antMatchers("/manager/**").hasAuthority("MANAGER")
@@ -81,7 +82,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.logout()
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 				.logoutSuccessUrl("/").and().exceptionHandling()
-				.accessDeniedPage("/access-denied");
+				.accessDeniedPage("/access-denied")
+				.and()
+				//prevent attacks based on MIME-type confusion..
+				.headers().contentTypeOptions()
+				.and()
+				.xssProtection()
+				.and()
+				.cacheControl()
+				.and()
+				//protocol down grade attacks and cookie hijacking..
+				.httpStrictTransportSecurity()
+				.and()
+				//prevent click jacking..
+				.frameOptions();
 	}
 	
 	@Override
