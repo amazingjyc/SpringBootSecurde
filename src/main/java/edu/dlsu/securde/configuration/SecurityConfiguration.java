@@ -52,11 +52,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
-		http.
-			authorizeRequests()
+		http.authorizeRequests()
 				.antMatchers("/").permitAll()
 				.antMatchers("/login").permitAll()
 				.antMatchers("/registration").permitAll()
+				.antMatchers("/registration-error").permitAll()
 				.antMatchers("/loginLocked").permitAll()
 				.antMatchers("/error").permitAll()
 				.antMatchers("/user/**").hasAuthority("USER")
@@ -67,8 +67,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/editItem").hasAnyAuthority("STAFF","MANAGER")
 				.antMatchers("/deleteItem").hasAnyAuthority("STAFF","MANAGER")
 				.antMatchers("/addItem").hasAnyAuthority("STAFF","MANAGER")
-				
 				.anyRequest().authenticated()
+//				.and().requiresChannel()
+//				.antMatchers("/user/**").requiresSecure()
+				
 				.and().formLogin()
 				.loginPage("/login")
 				.failureHandler(customAuthenticationFailureHandler)
@@ -78,11 +80,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 //				.defaultSuccessUrl("/checkPoint")
 				.usernameParameter("username")
 				.passwordParameter("password")
+				
 				.and()
 				.logout()
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 				.logoutSuccessUrl("/").and().exceptionHandling()
 				.accessDeniedPage("/access-denied")
+				
+//				.and()
+//				.sessionManagement()
+//				.maximumSessions(1)
+//				.expiredUrl("/login")
+//				.maxSessionsPreventsLogin(true)
+				
 				.and()
 				//prevent attacks based on MIME-type confusion..
 				.headers().contentTypeOptions()

@@ -4,6 +4,8 @@
 
 <head>
 <title>Error</title>
+<link rel="stylesheet" media="screen" type="text/css"
+	th:href="@{/css/accessDenied.css}" />
 <link rel="stylesheet"
 	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
 <script
@@ -14,14 +16,20 @@
 	th:href="@{/css/error.css}" />
 </head>
 <body marginwidth="0" marginheight="0">
+	<div class="nav">
+		<ul>
+			<li><a>DLSU ONLINE LIBRARY</a></li>
+			<li><a th:href="@{/goBack}">Return To Home Page</a></li>
+		</ul>
+	</div>
 	<div id="block_error">
 		<div>
 			<h2>Error Page. &nbspOops you've have encountered an error</h2>
 			<p>
 				It appears that Either something went wrong or the page doesn't
-				exist anymore..<br /> This web page is temporarily unable to service
-				your request as it has exceeded it’s resource limit. Please check
-				back shortly.
+				exist anymore..<br /> This web page is temporarily unable to
+				service your request as it has exceeded it’s resource limit. Please
+				check back shortly.
 			</p>
 			<p>
 				If you are the owner of the account and are regularly seeing this

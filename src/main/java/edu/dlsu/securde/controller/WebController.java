@@ -93,29 +93,82 @@ public class WebController {
 
 		ModelAndView modelAndView = new ModelAndView();
 
-		loggingService.logInfo("Checking if username: " + user.getUsername() + " is existing.");
+		loggingService.logInfo("Checking if username: " + user.getUsername() + " exists.");
 		// Existing username not found..
 		if (registrationService.checkExistingUser(user.getUsername()).size() == 0) {
 
 			// Process input..
 			System.out.println("User name is: " + user.getUsername());
 
-			// Parsing date
-			String[] date = user.getBirthday().split(",");
-			user.setBirthday(date[2] + "/" + date[0] + "/" + date[1]);
+			// Check user inputs..
+			Boolean accept = true;
 
-			// Set the lock status and number of attempts to 0..
-			user.setLocked(0);
-			user.setWrongAttempts(0);
+			// Check username..
+			if (user.getUsername().length() > 7) {
+				if (user.getUsername().matches("[A-Za-z0-9]+")) {
 
-			// Add the new user to the database..
-			user.setUserType(4);
-			// user.setUserType(1);
-			registrationService.addUser(user);
-			System.out.println("New user created!");
-			modelAndView.setViewName("login");
-			loggingService.logInfo("Username not existing.");
-			loggingService.logInfo("Anonymous has successfully created an account. Redirecting to login page.");
+				} else {
+					accept = false;
+					loggingService.logInfo("Anonymous input invalid username.");
+				}
+			} else {
+				System.out.println("LESS THAN 7");
+				accept = false;
+				loggingService.logInfo("Anonymous input invalid username.");
+			}
+
+			// Check email..
+			if (!(user.getEmail().contains("@")
+					&& ((user.getEmail().contains(".ph") || (user.getEmail().contains(".com")))))) {
+				accept = false;
+				loggingService.logInfo("Anonymous input invalid email.");
+			}
+
+			// Check names..
+			if (!(isInputAlphabet(user.getFirstName()))) {
+				accept = false;
+				loggingService.logInfo("Anonymous input invalid first name.");
+			}
+			if (!(isInputAlphabet(user.getMiddleInitial())) || user.getMiddleInitial().length() > 1) {
+				accept = false;
+				loggingService.logInfo("Anonymous input invalid middle initial.");
+			}
+			if (!(isInputAlphabet(user.getLastName()))) {
+				accept = false;
+				loggingService.logInfo("Anonymous input invalid last name.");
+			}
+			if (!(isPasswordValid(user.getPassword(), user.getUsername(), user.getFirstName(), user.getLastName()))) {
+				accept=false;
+				loggingService.logInfo("Anonymous input invalid password.");
+			}
+			// Check if 8 digits..
+			if (user.getStudentEmployeeNumber() < 10000000 || user.getStudentEmployeeNumber() > 99999999) {
+				accept=false;
+				loggingService.logInfo("Anonymous input invalid id number.");
+			}
+
+			if (accept) {
+				// Parsing date
+				String[] date = user.getBirthday().split(",");
+				user.setBirthday(date[2] + "/" + date[0] + "/" + date[1]);
+
+				// Set the lock status and number of attempts to 0..
+				user.setLocked(0);
+				user.setWrongAttempts(0);
+
+				// Add the new user to the database..
+				user.setUserType(4);
+				// user.setUserType(1);
+				registrationService.addUser(user);
+				System.out.println("New user created!");
+				modelAndView.setViewName("login");
+				loggingService.logInfo("Username not existing.");
+				loggingService.logInfo("Anonymous has successfully created an account. Redirecting to login page.");
+			} else {
+				loggingService.logInfo(
+						"Account creation failed because of invalid account information. Redirecting back to registration.");
+				modelAndView.setViewName("registration-error");
+			}
 		} else {
 			System.out.println("EXISTING USER ALREADY!");
 			loggingService.logInfo("Account creation failed because the username: " + user.getUsername()
@@ -1978,7 +2031,7 @@ public class WebController {
 		User user = userService.getUser(auth.getName()).get(0);
 
 		loggingService.logInfo("Username: " + user.getUsername()
-				+ " tried to access unauthorized webpage/content. User is blocked from accessing the content.");
+				+ " tried to access unauthorized/error webpage. User is blocked/stopped from accessing the content.");
 
 		if (user.getUserType() == 1) {
 			// Students/Faculty..
@@ -2100,7 +2153,7 @@ public class WebController {
 
 		User user = userService.getUser(auth.getName()).get(0);
 		loggingService.logInfo("Username: " + user.getUsername()
-		+ " experienced webpage crashing. Either server side or page not found or others. User is redirected to the error page.");
+				+ " experienced webpage crashing. Either server side or page not found or others. User is redirected to the error page.");
 
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("exception", ex);
@@ -2108,16 +2161,68 @@ public class WebController {
 		mav.setViewName("error");
 		return mav;
 	}
-	
-//	@RequestMapping(value = { "/error" }, method = RequestMethod.GET)
-//	public ModelAndView error() {
-//		ModelAndView modelAndView = new ModelAndView();
-//		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//		System.out.println(auth.getName());
-//
-//		User user = userService.getUser(auth.getName()).get(0);
-//
-//		modelAndView.setViewName("error");
-//		return modelAndView;
-//	}
+
+	// Check if input contains only alphabet letters..
+	public boolean isInputAlphabet(String input) {
+		char[] chars = input.toCharArray();
+
+		for (char c : chars) {
+			if (!Character.isLetter(c)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	// Check password input..
+	private boolean isPasswordValid(String password, String username, String firstName, String lastName) {
+		/*
+		 * Passwords must have at least six characters.Passwords can’t contain
+		 * the user name or parts of the user’s full name, such as his first
+		 * name. Passwords must use at least three of the four available
+		 * character types: lowercase letters, uppercase letters, numbers, and
+		 * symbols.
+		 */
+
+		System.out.println("Password: "+password);
+		int count = 0;
+
+		if (password.length() < 6) {
+			return false;
+		} else {
+			if (password.contains(username)) {
+				return false;
+			}
+			if (password.contains(firstName)) {
+				return false;
+			}
+			if (password.contains(lastName)) {
+				return false;
+			}
+			if (password.matches(".+[A-Z].+")||password.matches("[A-Z].+")||password.matches(".+[A-Z]")) {
+				System.out.println("A-Z");
+				count++;
+			}
+			if (password.matches(".+[a-z].+")||password.matches("[a-z].+")||password.matches(".+[a-z]")) {
+				System.out.println("a-z");
+				count++;
+			}
+			if (password.matches(".+[1-9].+")||password.matches("[1-9].+")||password.matches(".+[1-9]")) {
+				System.out.println("1-9");
+				count++;
+			}
+			if (password.contains("!") || password.contains("?") || password.contains("#") || password.contains("@")
+					|| password.contains("$") || password.contains("%") || password.contains("&")
+					|| password.contains("_") || password.contains("-") || password.contains("*")) {
+				count++;
+				System.out.println("Special Symbols");
+			}
+			if (count < 3) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 }

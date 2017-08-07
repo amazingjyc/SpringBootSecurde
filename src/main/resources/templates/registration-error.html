@@ -28,6 +28,10 @@
 		var birthyear = $("#birthyear").val();
 		$('#birthYear').val(birthyear);
 	}
+	function codeAddress() {
+        alert('You have been redirected back to the registration page due to invalid inputs. Please retry again.');
+    }
+    window.onload = codeAddress;
 </script>
 </head>
 
@@ -44,8 +48,8 @@
 						<div class="controls">
 							<input type="text" id="username" name="username" placeholder=""
 								class="input-xlarge" required="required">
-							<p class="help-block">Username should contain letters and
-								numbers, without spaces and a length of 8 characters</p>
+							<p class="help-block">Username can contain any letters or
+								numbers, without spaces</p>
 						</div>
 					</div>
 
