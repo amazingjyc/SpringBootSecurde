@@ -78,7 +78,8 @@
 							(Confirm)</label>
 						<div class="controls">
 							<input type="password" id="passwordConfirm"
-								name="passwordConfirm" placeholder="" class="input-xlarge" required="required">
+								name="passwordConfirm" placeholder="" class="input-xlarge"
+								required="required">
 							<p class="help-block">Please confirm password</p>
 						</div>
 					</div>
@@ -250,9 +251,25 @@
 					<div class="control-group">
 						<label class="control-label" for="email">Secret Question:</label>
 						<div class="controls">
-							<input type="text" id="secretQuestion" name="secretQuestion"
-								placeholder="" class="input-xlarge" required="required">
-							<p class="help-block">Please provide your security question</p>
+							<select id="secretQuestion" name="secretQuestion">
+								<option
+									value="What is the first name of the person you first kissed?">What
+									is the first name of the person you first kissed?</option>
+								<option
+									value="What is the last name of the teacher who gave you your first failing grade?">What
+									is the last name of the teacher who gave you your first failing
+									grade?</option>
+								<option
+									value="Where were you when you had your first alcoholic drink (or cigarette)?">Where
+									were you when you had your first alcoholic drink (or
+									cigarette)?</option>
+								<option
+									value="When you were young, what did you want to be when you grew up?">When
+									you were young, what did you want to be when you grew up?</option>
+								<option
+									value="Who was your childhood hero?">Who was your childhood hero?</option>
+							</select>
+							<p class="help-block">Please pick your security question</p>
 						</div>
 					</div>
 

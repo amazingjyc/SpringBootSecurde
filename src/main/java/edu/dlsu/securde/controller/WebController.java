@@ -10,6 +10,8 @@ import java.util.ArrayList;
 //import java.util.Date;
 //import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -17,6 +19,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,6 +77,9 @@ public class WebController {
 
 	@Autowired
 	TagService tagService;
+
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	@RequestMapping(value = { "/", "/login" }, method = RequestMethod.GET)
 	public ModelAndView login() {
@@ -1342,7 +1348,7 @@ public class WebController {
 			tag.setTag("None");
 			modelAndView.addObject("tag", tag);
 		}
-		
+
 		// Item Info
 		Item newItem = itemService.getItem(item_id);
 		modelAndView.addObject("item", newItem);
@@ -2093,6 +2099,77 @@ public class WebController {
 		return modelAndView;
 	}
 
+	@RequestMapping(value = { "/user/changePassword" }, method = RequestMethod.POST)
+	public ModelAndView changePassword(@RequestParam String password, @RequestParam String checkPassword) {
+		ModelAndView modelAndView = new ModelAndView();
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println(auth.getName());
+
+		User user = userService.getUser(auth.getName()).get(0);
+
+		System.out.println("Attempting to change password.");
+		System.out.println("OLDPassword: " + checkPassword);
+		System.out.println("NewPassword: " + password);
+		// Last checking..
+		if (bCryptPasswordEncoder.matches(checkPassword, user.getPassword()) && !checkPassword.equals(password)) {
+			user.setPassword(bCryptPasswordEncoder.encode(password));
+			// Update password..
+			userService.updateUser(user);
+
+			loggingService.logInfo("Username: " + user.getUsername()
+					+ " successfully changed password. Redirecting the user back to the login page for re-authentication.");
+			modelAndView.setViewName("redirect:/logout");
+		} else {
+			System.out.println("Old Password invalid.");
+
+			loggingService.logInfo("Username: " + user.getUsername()
+					+ " change password unsuccessful due to invalid inputs. Redirecting the user back to the account page.");
+			modelAndView.addObject("user", user);
+
+			loggingService.logInfo("Loading account details.");
+
+			// Transaction History..
+			// Only Show Borrowed Items and Reserved Meeting Rooms..
+			List<ItemReservation> cartItems = itemReservationService.findItemReservationByStatus(user.getId(), 2);
+
+			// Check the returnDate, if returnDate is before Today's date, then
+			// the
+			// user can make a review on that Item..
+			for (int i = 0; i < cartItems.size(); i++) {
+
+				// Get Today's date..
+				LocalDate today = LocalDate.now();
+				String dateToday = today + "";
+
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+				// Check returnDate if before Today's date..
+				try {
+					if (sdf.parse(cartItems.get(i).getReturnDate()).before(sdf.parse(dateToday))) {
+						cartItems.get(i).setCan_review(1);
+					} else {
+						cartItems.get(i).setCan_review(0);
+					}
+					// Update ItemReservation..
+					itemReservationService.saveItemReservation(cartItems.get(i));
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			modelAndView.addObject("cartItems", cartItems);
+			modelAndView.addObject("itemReservation", new ItemReservation());
+
+			modelAndView.addObject("roomTransactions",
+					roomReservationService.getRoomReservationsByUsername(user.getUsername()));
+			modelAndView.addObject("room", new ItemReservation());
+
+			modelAndView.setViewName("user/viewAccount");
+		}
+		return modelAndView;
+	}
+
 	@RequestMapping(value = { "/goBack" }, method = RequestMethod.GET)
 	public ModelAndView goBack() {
 		ModelAndView modelAndView = new ModelAndView();
@@ -2270,6 +2347,7 @@ public class WebController {
 			if (password.contains(lastName)) {
 				return false;
 			}
+
 			if (password.matches(".+[A-Z].+") || password.matches("[A-Z].+") || password.matches(".+[A-Z]")) {
 				System.out.println("A-Z");
 				count++;
@@ -2282,9 +2360,10 @@ public class WebController {
 				System.out.println("1-9");
 				count++;
 			}
-			if (password.contains("!") || password.contains("?") || password.contains("#") || password.contains("@")
-					|| password.contains("$") || password.contains("%") || password.contains("&")
-					|| password.contains("_") || password.contains("-") || password.contains("*")) {
+			Pattern pattern = Pattern.compile("[a-zA-Z0-9]*");
+			Matcher matcher = pattern.matcher(password);
+
+			if (!matcher.matches()) {
 				count++;
 				System.out.println("Special Symbols");
 			}

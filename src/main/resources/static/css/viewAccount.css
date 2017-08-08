@@ -143,10 +143,6 @@ img {
 	float: left;
 }
 
-#editBttn {
-	width: 10%;
-}
-
 .pagination {
 	display: inline-block;
 	float: right;
@@ -166,4 +162,8 @@ img {
 
 .pagination a:hover:not (.active ) {
 	background-color: #ddd;
+}
+
+#editButton{
+	width: 15%;
 }

@@ -35,7 +35,7 @@ CREATE TABLE `item_reservations` (
   `status` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,7 +44,6 @@ CREATE TABLE `item_reservations` (
 
 LOCK TABLES `item_reservations` WRITE;
 /*!40000 ALTER TABLE `item_reservations` DISABLE KEYS */;
-INSERT INTO `item_reservations` VALUES (3,'2017-07-26',0,'Introduction to Computers','Book',1,'2017-08-26',2,1),(4,'2017-06-24',1,'How to be Pro','Magazine',21,'2017-07-24',2,2),(6,'2017-06-24',1,'Politics And Society','Thesis',43,'2017-07-24',2,2),(7,'2017-08-08',NULL,'How to be Pro','Magazine',21,'2017-08-15',3,9);
 /*!40000 ALTER TABLE `item_reservations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,10 +89,10 @@ CREATE TABLE `reviews` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `item_id` int(11) DEFAULT NULL,
   `review` varchar(255) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `reviewer` varchar(255) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -102,7 +101,6 @@ CREATE TABLE `reviews` (
 
 LOCK TABLES `reviews` WRITE;
 /*!40000 ALTER TABLE `reviews` DISABLE KEYS */;
-INSERT INTO `reviews` VALUES (2,1,'Good Book! MUST READ!',6,'amazingjyc'),(3,1,'Good Explanation!',6,'amazingjyc'),(4,42,'Good Thesis!',6,'amazingjyc'),(5,42,'Nice Explanation',6,'amazingjyc'),(6,42,'Good!',6,'amazingjyc'),(7,42,'THE BEST! MUST READ!',6,'amazingjyc'),(9,21,'Nice Magazine!',2,'Prof'),(10,21,'Hello World!',2,'Prof'),(11,21,'Good Magazine!',2,'Prof'),(13,21,'Cool',2,'Prof'),(14,21,'Awesome!',2,'Prof'),(16,21,'Hello!',2,'Prof'),(18,43,'AWESOME!',2,'Prof'),(19,21,'Great Magazine!',2,'Prof'),(20,43,'Nice to read!',2,'Prof'),(21,43,'Good!',2,'Prof'),(22,43,'Best!',2,'Prof'),(23,21,'Impressive Magazine!',2,'Prof');
 /*!40000 ALTER TABLE `reviews` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -146,7 +144,7 @@ CREATE TABLE `room_reservations` (
   `user_id` int(11) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -155,7 +153,6 @@ CREATE TABLE `room_reservations` (
 
 LOCK TABLES `room_reservations` WRITE;
 /*!40000 ALTER TABLE `room_reservations` DISABLE KEYS */;
-INSERT INTO `room_reservations` VALUES (5,'2017-07-28','10 AM','RoomNumber2','9 AM',2,'Prof'),(7,'2017-07-29','10 AM','RoomNumber1','9 AM',2,'Prof');
 /*!40000 ALTER TABLE `room_reservations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -207,7 +204,7 @@ CREATE TABLE `user_role` (
 
 LOCK TABLES `user_role` WRITE;
 /*!40000 ALTER TABLE `user_role` DISABLE KEYS */;
-INSERT INTO `user_role` VALUES (5,1),(4,2),(6,2),(3,3),(8,3),(1,4),(2,4),(7,4),(9,4),(10,4);
+INSERT INTO `user_role` VALUES (1,1);
 /*!40000 ALTER TABLE `user_role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -235,7 +232,7 @@ CREATE TABLE `users_list` (
   `username` varchar(255) DEFAULT NULL,
   `wrong_attempts` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -244,7 +241,7 @@ CREATE TABLE `users_list` (
 
 LOCK TABLES `users_list` WRITE;
 /*!40000 ALTER TABLE `users_list` DISABLE KEYS */;
-INSERT INTO `users_list` VALUES (1,1,'1998/12/20','HelloWorld@dlsu.edu.ph','Hello','World',0,'K','$2a$10$fT7AY97e5k4awk8os5seCuvdjWYEbtZN0wJGjM5wVd9IpQuZfl86W','Hello World!','What is my favorite sentence?',11401234,4,'HelloWorld',0),(2,1,'1998/12/20','Prof@gmail.com','Prof','Best',0,'C','$2a$10$nz4.CavQHU9.U0JMnQoDNeq1r0z6rDgAW6H6JHxeTZwS83OzMXhKC','None','What is my favorite subject?',11412345,4,'Prof',0),(3,NULL,NULL,'staff1@gmail.com',NULL,NULL,0,NULL,'$2a$10$TKm0QKImRx4xVE5v7loEAO6JVzQYkjobAPQjKk4xclgvCp.I66S0m',NULL,NULL,0,3,'staff',0),(4,NULL,NULL,'manager1@gmail.com',NULL,NULL,0,NULL,'$2a$10$f1Ks4V3aphjPgwVxbVPkZ.I1S0BKGpin94OY0Muofo3obS31NrXQC',NULL,NULL,0,2,'manager1234',0),(5,1,'1998/12/19','admin@gmail.com','admin','admin',0,'A','$2a$10$.Cn9q2rrXMfk/afN.ACTg.dzfV.yAq0e.9Pa0v0unzI/5rZSP/04W','Admin','Who am I?',11011111,1,'admin',0),(6,NULL,NULL,'jarrellyveschua@yahoo.com',NULL,NULL,0,NULL,'$2a$10$CnuILpRc2511aHObTzI6ou2sXipsz9UnFzdNrPCQrHjZC4PBGHWh6',NULL,NULL,0,2,'jarrell',1),(7,1,'2017/01/01','1234@gmail.com','Hey','There',0,'U','$2a$10$SJcVKgabPH8RYlCDNbRmwOUpI9WeaDQyp5JC9LyM34/E6q4FtGxfS','Hi','What is my favorite sentence?',11401234,4,'NewUser1234',0),(8,NULL,NULL,'staff2@gmail.com',NULL,NULL,0,NULL,'$2a$10$r4UVx3w865y7vpzCDG5Mt.aS6Vuj3Y4AtvAN44KhG6lXr6OLdRJbO',NULL,NULL,0,3,'staff2',0),(9,2,'2017/01/01','Student@gmail.com','Jarrell','Chua',0,'L','$2a$10$wm81VmeHWjutDaU2zmp/8exJMvsJ8QVPNDX9IIgyS0/6nkRoteRRm','Dog','What is my favorite animal?',11111111,4,'Student1234',0),(10,2,'2017/01/01','user@gmail.com','Jarrell','Chua',0,'L','$2a$10$SiXBh9g31NJ7fKu05UcjDuY.uaFKLeO.AskRlH5wNQXCz/LZDpO2K','HAHA','What is my favorite sentence?',11401234,4,'user1234',0);
+INSERT INTO `users_list` VALUES (1,1,'2017/01/01','admin@gmail.com','Admin','Admin',0,'A','$2a$10$pRCSB5PD4ofKlOvJbd5/BukB8hTk1Wqy6sKruxpeSljqGUvGO64hW','Secret','What is the first name of the person you first kissed?',11111111,1,'admin123',0);
 /*!40000 ALTER TABLE `users_list` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -257,4 +254,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-08-08 22:55:02
+-- Dump completed on 2017-08-09  5:43:49

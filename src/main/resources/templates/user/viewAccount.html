@@ -23,13 +23,87 @@
 		$("#review").val(review);
 		$("#send").submit();
 	}
+
+	function changePassword() {
+		var success = 0;
+		var oldPassword = document.getElementById('oldPassword').value;
+		var newPassword = document.getElementById('newPassword').value;
+		var confirmNewPassword = document.getElementById('confirmNewPassword').value;
+		var username = document.getElementById('username').value;
+		var firstName = document.getElementById('firstName').value;
+		var lastName = document.getElementById('lastName').value;
+
+		if (confirmNewPassword === newPassword) {
+			//Check password policy..
+			if (newPassword.length > 5) {
+				//Check if contains uppercase, lowercase, numbers..
+				var upperCase = new RegExp('[A-Z]');
+				var lowerCase = new RegExp('[a-z]');
+				var numbers = new RegExp('[0-9]');
+				var count = 0;
+				if (newPassword.match(upperCase)) {
+					console.log("UC");
+					count++;
+				}
+				if (newPassword.match(lowerCase)) {
+					console.log("LC");
+					count++;
+				}
+				if (newPassword.match(numbers)) {
+					console.log("NUM");
+					count++;
+				}
+
+				//Check if contains special symbols..
+				var pattern = new RegExp(
+						/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/);
+				if (pattern.test(newPassword)) {
+					count++;
+				}
+
+				if (count > 2) {
+					//Check if parts of name is found on the password..
+					if (newPassword.indexOf(username) == -1
+							&& newPassword.indexOf(firstName) == -1
+							&& newPassword.indexOf(lastName) == -1) {
+						success = 1;
+					} else {
+						console
+								.log("Password contains username/part of names.");
+						success = 0;
+					}
+				} else {
+					console.log("Password does not comply with rule 3.");
+					success = 0;
+				}
+			} else {
+				console.log("Password length too short");
+				success = 0;
+			}
+		} else {
+			console.log("New password and confirm password did'nt match");
+			success = 0;
+		}
+
+		if (success == 0) {
+			alert("Failed to change password! Please try to follow our password policy/Recheck input old password.")
+		} else {
+			$("#password").val(newPassword);
+			$("#checkPassword").val(oldPassword);
+			$("#approved").submit();
+		}
+	}
 </script>
 </head>
 
 <body class="body" style="background-color: #f6f6f6">
 	<form id="send" th:action="@{/user/processReview}" method="POST">
-		<input type="hidden" name="item_id" id="item_id" /> 
-		<input type="hidden" name="review" id="review" />
+		<input type="hidden" name="item_id" id="item_id" /> <input
+			type="hidden" name="review" id="review" />
+	</form>
+	<form id="approved" th:action="@{/user/changePassword}" method="POST">
+		<input type="hidden" name="password" id="password" /> <input
+			type="hidden" name="checkPassword" id="checkPassword" />
 	</form>
 	<div class="nav">
 		<ul>
@@ -68,7 +142,50 @@
 					Type: <span th:if="${user.accountType} == 1">Faculty</span> <span
 					th:if="${user.accountType} == 2">Student</span>
 				</label> <br> </br>
-				<button id="editBttn" class="btn btn-warning">Edit Account</button>
+				<button id="editBttn" data-toggle="modal"
+					data-target="#changePasswordModal" class="btn btn-warning">Change
+					Password</button>
+
+				<input type="hidden" id="firstName" name="firstName"
+					th:value="${user.firstName}" /> <input type="hidden" id="lastName"
+					name="lastName" th:value="${user.lastName}" /> <input
+					type="hidden" id="username" name="username"
+					th:value="${user.username}" />
+
+				<!-- Modal -->
+				<div id="changePasswordModal" class="modal fade" role="dialog">
+					<div class="modal-dialog">
+
+						<!-- Modal content-->
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<h3 class="modal-title">Note: You are about to update your
+									password.</h3>
+							</div>
+							<div class="modal-body">
+								<p>Input Old Password</p>
+								<input type="password" id="oldPassword" name="oldPassword"
+									placeholder="" class="input-xlarge" required="required">
+								<br></br>
+								<p>Input New Password</p>
+								<input type="password" id="newPassword" name="newPassword"
+									placeholder="" class="input-xlarge" required="required">
+								<br></br>
+								<p>Confirm New Password</p>
+								<input type="password" id="confirmNewPassword"
+									name="confirmNewPassword" placeholder="" class="input-xlarge"
+									required="required">
+
+							</div>
+							<div class="modal-footer">
+								<input type="submit" th:onclick="'changePassword();'"
+									class="btn btn-success" style="float: right"
+									value="Change Password" />
+							</div>
+						</div>
+					</div>
+				</div>
 				<form th:action="@{/user/reserveCart}" method="GET">
 					<input type="submit" class="btn btn-success" value="GO TO CART" />
 				</form>
@@ -101,7 +218,8 @@
 						<td th:text="${itemReservation.borrowDate}"></td>
 						<td th:text="${itemReservation.returnDate}"></td>
 						<td><input th:if="${itemReservation.can_review} == 1"
-							type="text" th:name="${itemReservation.item_id}" th:id="${itemReservation.item_id}" />&nbsp
+							type="text" th:name="${itemReservation.item_id}"
+							th:id="${itemReservation.item_id}" />&nbsp
 							<button th:if="${itemReservation.can_review} == 1"
 								class="btn btn-success"
 								th:onclick="'sendID(\''+ ${itemReservation.item_id} +'\');'">Review</button>
