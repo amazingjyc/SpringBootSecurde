@@ -25,28 +25,23 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private DataSource dataSource;
-	
+
 	@Autowired
 	private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
-	
+
 	@Autowired
 	private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
-	
+
 	@Value("${spring.queries.users-query}")
 	private String usersQuery;
-	
+
 	@Value("${spring.queries.roles-query}")
 	private String rolesQuery;
 
 	@Override
-	protected void configure(AuthenticationManagerBuilder auth)
-			throws Exception {
-		auth.
-			jdbcAuthentication()
-				.usersByUsernameQuery(usersQuery)
-				.authoritiesByUsernameQuery(rolesQuery)
-				.dataSource(dataSource)
-				.passwordEncoder(bCryptPasswordEncoder);
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.jdbcAuthentication().usersByUsernameQuery(usersQuery).authoritiesByUsernameQuery(rolesQuery)
+				.dataSource(dataSource).passwordEncoder(bCryptPasswordEncoder);
 	}
 
 	@Override
@@ -87,12 +82,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.logoutSuccessUrl("/").and().exceptionHandling()
 				.accessDeniedPage("/access-denied")
 				
-//				.and()
-//				.sessionManagement()
-//				.maximumSessions(1)
-//				.expiredUrl("/login")
-//				.maxSessionsPreventsLogin(true)
-				
 				.and()
 				//prevent attacks based on MIME-type confusion..
 				.headers().contentTypeOptions()
@@ -106,13 +95,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.and()
 				//prevent click jacking..
 				.frameOptions();
+				
+//				.and()
+//				.sessionManagement()
+//				.maximumSessions(1)
+//				.expiredUrl("/login")
+//				.maxSessionsPreventsLogin(true);
 	}
-	
+
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-	    web
-	       .ignoring()
-	       .antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**");
+		web.ignoring().antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**");
 	}
 
 }

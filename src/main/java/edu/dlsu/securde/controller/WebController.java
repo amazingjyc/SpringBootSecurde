@@ -29,6 +29,7 @@ import edu.dlsu.securde.model.ItemReservation;
 import edu.dlsu.securde.model.Review;
 import edu.dlsu.securde.model.RoomReservation;
 import edu.dlsu.securde.model.Schedule;
+import edu.dlsu.securde.model.Tag;
 import edu.dlsu.securde.model.User;
 import edu.dlsu.securde.services.ItemReservationService;
 import edu.dlsu.securde.services.ItemService;
@@ -38,6 +39,7 @@ import edu.dlsu.securde.services.MeetingRoomsService;
 import edu.dlsu.securde.services.RegistrationService;
 import edu.dlsu.securde.services.ReviewService;
 import edu.dlsu.securde.services.RoomReservationService;
+import edu.dlsu.securde.services.TagService;
 import edu.dlsu.securde.services.UserService;
 
 @Controller
@@ -70,13 +72,23 @@ public class WebController {
 	@Autowired
 	MeetingRoomsService meetingRoomsService;
 
+	@Autowired
+	TagService tagService;
+
 	@RequestMapping(value = { "/", "/login" }, method = RequestMethod.GET)
 	public ModelAndView login() {
 		ModelAndView modelAndView = new ModelAndView();
-		User user = new User();
-		modelAndView.addObject("user", user);
-		loggingService.logInfo("Anonymous is accessing the login page");
-		modelAndView.setViewName("login");
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println("Username" + auth.getName());
+		if (auth.getName().equals("anonymousUser")) {
+			User user = new User();
+			modelAndView.addObject("user", user);
+			loggingService.logInfo("Anonymous is accessing the login page");
+			modelAndView.setViewName("login");
+		} else {
+			modelAndView.setViewName("redirect:/startUp");
+		}
 		return modelAndView;
 	}
 
@@ -89,7 +101,7 @@ public class WebController {
 	}
 
 	@RequestMapping(value = { "/registration" }, method = RequestMethod.POST)
-	public ModelAndView registrationDone(@Valid User user) {
+	public ModelAndView registrationDone(@Valid User user, @RequestParam String passwordConfirm) {
 
 		ModelAndView modelAndView = new ModelAndView();
 
@@ -105,14 +117,14 @@ public class WebController {
 
 			// Check username..
 			if (user.getUsername().length() > 7) {
-				if (user.getUsername().matches("[A-Za-z0-9]+")) {
+				if (isValidUsername(user.getUsername())) {
 
 				} else {
 					accept = false;
 					loggingService.logInfo("Anonymous input invalid username.");
 				}
 			} else {
-				System.out.println("LESS THAN 7");
+				System.out.println("LESS THAN 8");
 				accept = false;
 				loggingService.logInfo("Anonymous input invalid username.");
 			}
@@ -125,7 +137,7 @@ public class WebController {
 			}
 
 			// Check names..
-			if (!(isInputAlphabet(user.getFirstName()))) {
+			if (!(isInputAlphabet(user.getFirstName())) || user.getFirstName().length() == 0) {
 				accept = false;
 				loggingService.logInfo("Anonymous input invalid first name.");
 			}
@@ -133,17 +145,25 @@ public class WebController {
 				accept = false;
 				loggingService.logInfo("Anonymous input invalid middle initial.");
 			}
-			if (!(isInputAlphabet(user.getLastName()))) {
+			if (!(isInputAlphabet(user.getLastName())) || user.getLastName().length() == 0) {
 				accept = false;
 				loggingService.logInfo("Anonymous input invalid last name.");
 			}
+
+			// Check Password..
+			if (!passwordConfirm.equals(user.getPassword())) {
+				System.out.println("Passconfirm and Password are not equal.");
+				loggingService.logInfo("Anonymous input invalid password.");
+				accept = false;
+			}
+
 			if (!(isPasswordValid(user.getPassword(), user.getUsername(), user.getFirstName(), user.getLastName()))) {
-				accept=false;
+				accept = false;
 				loggingService.logInfo("Anonymous input invalid password.");
 			}
 			// Check if 8 digits..
 			if (user.getStudentEmployeeNumber() < 10000000 || user.getStudentEmployeeNumber() > 99999999) {
-				accept=false;
+				accept = false;
 				loggingService.logInfo("Anonymous input invalid id number.");
 			}
 
@@ -687,6 +707,15 @@ public class WebController {
 
 		// Item Reservation Info
 		System.out.println("Item ID is: " + id);
+
+		// Tag..
+		if (tagService.findTagByItem(id) != null) {
+			modelAndView.addObject("tag", tagService.findTagByItem(id).get(0));
+		} else {
+			Tag tag = new Tag();
+			tag.setTag("None");
+			modelAndView.addObject("tag", tag);
+		}
 
 		// Check Item Status
 		Item checkItem = itemService.getItem(id);
@@ -1305,6 +1334,15 @@ public class WebController {
 			modelAndView.addObject("returnDate", checkItem.getDateOfAvailability());
 		}
 
+		// Tag..
+		if (tagService.findTagByItem(item_id) != null) {
+			modelAndView.addObject("tag", tagService.findTagByItem(item_id).get(0));
+		} else {
+			Tag tag = new Tag();
+			tag.setTag("None");
+			modelAndView.addObject("tag", tag);
+		}
+		
 		// Item Info
 		Item newItem = itemService.getItem(item_id);
 		modelAndView.addObject("item", newItem);
@@ -1809,26 +1847,67 @@ public class WebController {
 			@RequestParam Integer userType, @RequestParam String email) {
 		ModelAndView modelAndView = new ModelAndView();
 
-		// Form the user..
-		User user = new User();
-		user.setUsername(username);
-		user.setPassword(password);
-		user.setEmail(email);
-		user.setUserType(userType);
-		user.setLocked(0);
-		user.setWrongAttempts(0);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println(auth.getName());
+
+		User adminUser = userService.getUser(auth.getName()).get(0);
+
+		loggingService.logInfo(
+				"Username: " + adminUser.getUsername() + " attempted adding new staff with username:" + username + ".");
 
 		// Existing username not found..
-		if (registrationService.checkExistingUser(user.getUsername()).size() == 0) {
+		if (registrationService.checkExistingUser(username).size() == 0) {
 
 			// Process input..
-			System.out.println("User name is: " + user.getUsername());
+			System.out.println("User name is: " + username);
 
-			// Add the new user to the database..
-			registrationService.addUser(user);
-			System.out.println("New user created!");
+			// check inputs first..
+			boolean accept = true;
+
+			// Check username..
+			if (username.length() > 7) {
+				if (isValidUsername(username)) {
+
+				} else {
+					accept = false;
+					loggingService.logInfo("Admin input invalid username.");
+				}
+			} else {
+				System.out.println("LESS THAN 8");
+				accept = false;
+				loggingService.logInfo("Admin input invalid username.");
+			}
+
+			// Check email..
+			if (!(email.contains("@") && ((email.contains(".ph") || (email.contains(".com")))))) {
+				accept = false;
+				loggingService.logInfo("Admin input invalid email.");
+			}
+
+			// Check Password..
+			if (!(isPasswordValid(password, username, username, username))) {
+				accept = false;
+				loggingService.logInfo("Admin input invalid password.");
+			}
+
+			if (accept) {
+				// Add the new user to the database..
+				// Form the user..
+				User user = new User();
+				user.setUsername(username);
+				user.setPassword(password);
+				user.setEmail(email);
+				user.setUserType(userType);
+				user.setLocked(0);
+				user.setWrongAttempts(0);
+				registrationService.addUser(user);
+				System.out.println("New user created!");
+			} else {
+				loggingService.logInfo("Staff/Manager account creation failed. Admin input invalid account details.");
+			}
 		} else {
 			System.out.println("EXISTING USER ALREADY!");
+			loggingService.logInfo("Staff/Manager account creation failed. Username already exists.");
 		}
 
 		// Students/Faculty..
@@ -1840,14 +1919,6 @@ public class WebController {
 		modelAndView.addObject("managers", userService.findByUserType(2));
 		modelAndView.addObject("staffs", userService.findByUserType(3));
 		modelAndView.setViewName("admin/admin");
-
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		System.out.println(auth.getName());
-
-		User adminUser = userService.getUser(auth.getName()).get(0);
-
-		loggingService
-				.logInfo("Username: " + adminUser.getUsername() + " adding new staff:" + user.getUsername() + ".");
 
 		return modelAndView;
 	}
@@ -2184,7 +2255,7 @@ public class WebController {
 		 * symbols.
 		 */
 
-		System.out.println("Password: "+password);
+		System.out.println("Password: " + password);
 		int count = 0;
 
 		if (password.length() < 6) {
@@ -2199,15 +2270,15 @@ public class WebController {
 			if (password.contains(lastName)) {
 				return false;
 			}
-			if (password.matches(".+[A-Z].+")||password.matches("[A-Z].+")||password.matches(".+[A-Z]")) {
+			if (password.matches(".+[A-Z].+") || password.matches("[A-Z].+") || password.matches(".+[A-Z]")) {
 				System.out.println("A-Z");
 				count++;
 			}
-			if (password.matches(".+[a-z].+")||password.matches("[a-z].+")||password.matches(".+[a-z]")) {
+			if (password.matches(".+[a-z].+") || password.matches("[a-z].+") || password.matches(".+[a-z]")) {
 				System.out.println("a-z");
 				count++;
 			}
-			if (password.matches(".+[1-9].+")||password.matches("[1-9].+")||password.matches(".+[1-9]")) {
+			if (password.matches(".+[1-9].+") || password.matches("[1-9].+") || password.matches(".+[1-9]")) {
 				System.out.println("1-9");
 				count++;
 			}
@@ -2223,6 +2294,28 @@ public class WebController {
 		}
 
 		return true;
+	}
+
+	public boolean isValidUsername(String username) {
+		int aCount = 0;
+		int nCount = 0;
+		if (username.matches(".+[A-Z].+") || username.matches("[A-Z].+") || username.matches(".+[A-Z]")) {
+			System.out.println("A-Z");
+			aCount++;
+		}
+		if (username.matches(".+[a-z].+") || username.matches("[a-z].+") || username.matches(".+[a-z]")) {
+			System.out.println("a-z");
+			aCount++;
+		}
+		if (username.matches(".+[1-9].+") || username.matches("[1-9].+") || username.matches(".+[1-9]")) {
+			System.out.println("1-9");
+			nCount++;
+		}
+		if (nCount > 0 && aCount > 0) {
+			return true;
+		}
+
+		return false;
 	}
 
 }

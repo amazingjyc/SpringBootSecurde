@@ -19,7 +19,8 @@
 	<div class="nav">
 		<ul>
 			<li><a>DLSU ONLINE LIBRARY</a></li>
-			<li><a th:href="@{/manager/libraryManager}">Return Manager Page</a></li>
+			<li><a th:href="@{/manager/libraryManager}">Return Manager
+					Page</a></li>
 		</ul>
 	</div>
 
@@ -38,8 +39,7 @@
 					<br> </br> <label>Publisher: <span
 						th:text="${item.publisher}"></span></label> <br> </br> <label>Year
 						published: <span th:text="${item.yearPublished}"></span>
-					</label> <br> </br> <label>Tag(s): <!--<c:forEach items="${tags}" var="tag" > ${tag}</c:forEach>
-						-->
+					</label> <br> </br> <label>Tag(s): <span th:text="${tag.tag}"></span>
 					</label> <br> </br> <br> </br> <br> </br> <label> <span
 						th:if="${status} == 1" class="label label-success">STATUS:
 							AVAILABLE</span> <br></br>

@@ -14,8 +14,8 @@
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
-	function sendReservation(dateNow,dateNextWeek) {
-		console.log(dateNow+" "+dateNextWeek);
+	function sendReservation(dateNow, dateNextWeek) {
+		console.log(dateNow + " " + dateNextWeek);
 		var dateNow = dateNow;
 		var dateNextWeek = dateNextWeek;
 		$("#status").val(3);
@@ -29,14 +29,15 @@
 </head>
 
 <body class="body" style="background-color: #f6f6f6">
-	<form id="send" th:object="${itemReservation}" th:action="@{/user/processCart}" method="POST">
-		<input type="hidden" name="item_id" id="item_id"  th:value="${item.id}"  />
-		<input type="hidden" name="user_id" id="user_id"  th:value="${user.id}" />
-		<input type="hidden" name="status" id="status" />
-		<input type="hidden" name="borrowDate" id="borrowDate" />
-		<input type="hidden" name="returnDate" id="returnDate" />
+	<form id="send" th:object="${itemReservation}"
+		th:action="@{/user/processCart}" method="POST">
+		<input type="hidden" name="item_id" id="item_id" th:value="${item.id}" />
+		<input type="hidden" name="user_id" id="user_id" th:value="${user.id}" />
+		<input type="hidden" name="status" id="status" /> <input
+			type="hidden" name="borrowDate" id="borrowDate" /> <input
+			type="hidden" name="returnDate" id="returnDate" />
 	</form>
-	
+
 	<div class="nav">
 		<ul>
 			<li><a th:href="@{/user/home}">Home</a></li>
@@ -51,8 +52,8 @@
 			<li style="float: right">
 				<form action="search" th:action="@{/user/resultsPage}" method="POST">
 					<div class="input-group">
-						<input type="text" id="keyWord" class="form-control" placeholder="Search"
-							name="keyWord">
+						<input type="text" id="keyWord" class="form-control"
+							placeholder="Search" name="keyWord">
 						<div class="input-group-btn">
 							<button class="btn btn-default" type="submit">
 								<i class="glyphicon glyphicon-search"></i>
@@ -79,37 +80,32 @@
 					<br> </br> <label>Publisher: <span
 						th:text="${item.publisher}"></span></label> <br> </br> <label>Year
 						published: <span th:text="${item.yearPublished}"></span>
-					</label> <br> </br> <label>Tag(s): <!--<c:forEach items="${tags}" var="tag" > ${tag}</c:forEach>
-						-->
-					</label> <br> </br> <br> </br> <br> </br>						
-						
-				<label>
-					<span th:if="${status} == 1" class="label label-success">STATUS: AVAILABLE</span>
-					<br></br>
-					<button  th:if="${status} == 1" type="button" class="btn btn-warning" data-toggle="modal"
-						data-target="#addItemModal">Reserve</button>
-				</label>
-				<label>
-					<span th:if="${status} == 2" class="label label-danger">STATUS: NOT AVAILABLE</span>
-					<br></br>
-					<span th:if="${status} == 2" class="label label-danger">Expected Date of Availability: <span th:text="${returnDate}"></span></span>
-				</label>
-				<label>
-					<span th:if="${status} == 3" class="label label-warning">STATUS: AVAILABLE, NOTE: ALREADY IN SOMEONE'S RESERVE CART</span>
-					<br></br>
-					<button th:if="${status} == 3" type="button" class="btn btn-warning" data-toggle="modal"
-						data-target="#addItemModal">Reserve</button>
-				</label>
-				<label>
-					<span th:if="${status} == 4" class="label label-info">STATUS: ALREADY IN CART</span>
-				</label>
-				<label>
-					<span th:if="${status} == 5" class="label label-danger">STATUS: YOU ARE CURRENTLY BORROWING THIS ITEM</span>
-					<br></br>
-					<span th:if="${status} == 5" class="label label-danger">Please Return By: <span th:text="${returnDate}"></span></span>
-				</label>
-				<br></br>
-				<br></br>
+					</label> <br> </br> <label>Tag(s): <span th:text="${tag.tag}"></span>
+					</label> <br> </br> <br> </br> <br> </br> <label> <span
+						th:if="${status} == 1" class="label label-success">STATUS:
+							AVAILABLE</span> <br></br>
+						<button th:if="${status} == 1" type="button"
+							class="btn btn-warning" data-toggle="modal"
+							data-target="#addItemModal">Reserve</button>
+					</label> <label> <span th:if="${status} == 2"
+						class="label label-danger">STATUS: NOT AVAILABLE</span> <br></br>
+						<span th:if="${status} == 2" class="label label-danger">Expected
+							Date of Availability: <span th:text="${returnDate}"></span>
+					</span>
+					</label> <label> <span th:if="${status} == 3"
+						class="label label-warning">STATUS: AVAILABLE, NOTE:
+							ALREADY IN SOMEONE'S RESERVE CART</span> <br></br>
+						<button th:if="${status} == 3" type="button"
+							class="btn btn-warning" data-toggle="modal"
+							data-target="#addItemModal">Reserve</button>
+					</label> <label> <span th:if="${status} == 4"
+						class="label label-info">STATUS: ALREADY IN CART</span>
+					</label> <label> <span th:if="${status} == 5"
+						class="label label-danger">STATUS: YOU ARE CURRENTLY
+							BORROWING THIS ITEM</span> <br></br> <span th:if="${status} == 5"
+						class="label label-danger">Please Return By: <span
+							th:text="${returnDate}"></span></span>
+					</label> <br></br> <br></br>
 					<!-- Modal -->
 					<div id="addItemModal" class="modal fade" role="dialog">
 						<div class="modal-dialog">
@@ -121,16 +117,24 @@
 									<h3 class="modal-title">Note</h3>
 								</div>
 								<div class="modal-body">
-									<p>You are about to add Item: <span th:text="${item.itemName}"></span> into your reserve cart.</p>
+									<p>
+										You are about to add Item: <span th:text="${item.itemName}"></span>
+										into your reserve cart.
+									</p>
 									<br></br>
 									<p>Note:</p>
-									<p>Reserve Date: <span th:text="${dateNow}"></span></p>
-									<p>Expected Return Date: <span th:text="${dateNextWeek}"></span></p>
+									<p>
+										Reserve Date: <span th:text="${dateNow}"></span>
+									</p>
+									<p>
+										Expected Return Date: <span th:text="${dateNextWeek}"></span>
+									</p>
 								</div>
 								<div class="modal-footer">
-									<input type="submit" th:onclick="'sendReservation(\''+ ${dateNow} +'\',\''+ ${dateNextWeek} +'\');'" 
-											name="addToCartContinue" class="btn btn-success"
-											style="float: right" value="Confirm Reservation" /> 
+									<input type="submit"
+										th:onclick="'sendReservation(\''+ ${dateNow} +'\',\''+ ${dateNextWeek} +'\');'"
+										name="addToCartContinue" class="btn btn-success"
+										style="float: right" value="Confirm Reservation" />
 								</div>
 							</div>
 						</div>
@@ -152,7 +156,8 @@
 					<div class="col-md-2 col-sm-2 hidden-xs">
 						<figure class="thumbnail"> <img class="img-responsive"
 							src="http://www.keita-gaming.com/assets/profile/default-avatar-c5d8ec086224cb6fc4e395f4ba3018c2.jpg" />
-						<figcaption class="text-center"><span th:text="${review.reviewer}"></span></figcaption> </figure>
+						<figcaption class="text-center">
+						<span th:text="${review.reviewer}"></span></figcaption> </figure>
 					</div>
 					<div class="col-md-10 col-sm-10">
 						<div class="panel panel-default arrow left">

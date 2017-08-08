@@ -53,7 +53,7 @@
 						<label class="control-label" for="email">E-mail</label>
 						<div class="controls">
 							<input type="text" id="email" name="email" placeholder=""
-								class="input-xlarge">
+								class="input-xlarge" required="required">
 							<p class="help-block">Please provide your E-mail</p>
 						</div>
 					</div>
@@ -63,11 +63,13 @@
 						<div class="controls">
 							<input type="password" id="password" name="password"
 								placeholder="" class="input-xlarge" required="required">
-							<p class="help-block">Passwords must have at least six
-								characters.<br></br>Passwords can’t contain the user name or parts of
-								the user’s full name, such as his first name.<br></br>Passwords must use
-								at least three of the four available character types: lowercase
-								letters, uppercase letters, numbers, and symbols.</p>
+							<p class="help-block">
+								Passwords must have at least six characters.<br></br>Passwords
+								can’t contain the user name or parts of the user’s full name,
+								such as his first name.<br></br>Passwords must use at least
+								three of the four available character types: lowercase letters,
+								uppercase letters, numbers, and symbols.
+							</p>
 						</div>
 					</div>
 
@@ -75,9 +77,8 @@
 						<label class="control-label" for="password_confirm">Password
 							(Confirm)</label>
 						<div class="controls">
-							<input type="password" id="password_confirm"
-								name="password_confirm" placeholder="" class="input-xlarge"
-								required="required">
+							<input type="password" id="passwordConfirm"
+								name="passwordConfirm" placeholder="" class="input-xlarge" required="required">
 							<p class="help-block">Please confirm password</p>
 						</div>
 					</div>
@@ -215,9 +216,9 @@
 						</div>
 					</div>
 
-					<input type="hidden" name="birthday" id="birthMonth" value="01"></input> <input
-						type="hidden" name="birthday" id="birthDay" value="01"></input> <input
-						type="hidden" name="birthday" id="birthYear" value="2017"></input>
+					<input type="hidden" name="birthday" id="birthMonth" value="01"></input>
+					<input type="hidden" name="birthday" id="birthDay" value="01"></input>
+					<input type="hidden" name="birthday" id="birthYear" value="2017"></input>
 
 					<div class="control-group">
 						<label class="control-label" for="email">Account Type:</label>
@@ -239,7 +240,7 @@
 						<label class="control-label" for="email">Student/Employee
 							Id Number:</label>
 						<div class="controls">
-							<input type="text" id="idNumber" name="studentEmployeeNumber"
+							<input type="number" id="idNumber" name="studentEmployeeNumber"
 								placeholder="" class="input-xlarge" required="required">
 							<p class="help-block">Please provide your identification
 								number</p>
@@ -269,7 +270,6 @@
 					<div class="control-group">
 						<div class="controls">
 							<button class="btn btn-success">Register</button>
-							<button class="btn btn-danger">Cancel</button>
 						</div>
 					</div>
 				</fieldset>
