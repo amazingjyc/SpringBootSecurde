@@ -186,7 +186,8 @@ public class WebController {
 			System.out.println("ConfirmPassword: " + checkPassword);
 			if (isPasswordValid(password, userService.getUser(username).get(0).getUsername(),
 					userService.getUser(username).get(0).getFirstName(),
-					userService.getUser(username).get(0).getLastName()) && password.equals(checkPassword)) {
+					userService.getUser(username).get(0).getLastName()) && password.equals(checkPassword) && 
+					!bCryptPasswordEncoder.matches(password, user.getPassword())) {
 				modelAndView.setViewName("/login");
 				loggingService
 						.logInfo("Anonymous with username: " + user.getUsername() + " successfully changed password.");
