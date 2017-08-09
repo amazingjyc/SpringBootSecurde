@@ -11,5 +11,5 @@ Secret
 
 4. Users
 user1234
-NewPassword1234!
-No one
+Password1234!
+secret

@@ -204,7 +204,7 @@ CREATE TABLE `user_role` (
 
 LOCK TABLES `user_role` WRITE;
 /*!40000 ALTER TABLE `user_role` DISABLE KEYS */;
-INSERT INTO `user_role` VALUES (1,1),(3,4);
+INSERT INTO `user_role` VALUES (1,1),(4,4);
 /*!40000 ALTER TABLE `user_role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -232,7 +232,7 @@ CREATE TABLE `users_list` (
   `username` varchar(255) DEFAULT NULL,
   `wrong_attempts` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -241,7 +241,7 @@ CREATE TABLE `users_list` (
 
 LOCK TABLES `users_list` WRITE;
 /*!40000 ALTER TABLE `users_list` DISABLE KEYS */;
-INSERT INTO `users_list` VALUES (1,1,'2017/01/01','admin@gmail.com','Admin','Admin',0,'A','$2a$10$HQAe.8IOzLiEYt1eIT12Suv8/113yFUE3pBPBEfEDz9qQNY2MVbOu','$2a$10$MXkrkPm7Lqb23iJIcAmHIe7h7gKZcvh04USI1QHYtX5kRbPehPjFu','What is the first name of the person you first kissed?',11111111,1,'admin123',0),(3,2,'2017/01/01','user@gmail.com','User','Unknown',0,'U','$2a$10$Surg5AdGTsVGYO8s3fKNlOt1i4wYNvxSnOMb4HSaiI/Exqo9IypuO','$2a$10$3GiRa011qYaPtsqoldYCb.yDTAVC2twO9SP.SKdvr3sjm103UaXXq','Who was your childhood hero?',11412345,4,'user1234',0);
+INSERT INTO `users_list` VALUES (1,1,'2017/01/01','admin@gmail.com','Admin','Admin',0,'A','$2a$10$HQAe.8IOzLiEYt1eIT12Suv8/113yFUE3pBPBEfEDz9qQNY2MVbOu','$2a$10$MXkrkPm7Lqb23iJIcAmHIe7h7gKZcvh04USI1QHYtX5kRbPehPjFu','What is the first name of the person you first kissed?',11111111,1,'admin123',0),(4,1,'2017/01/01','user@gmail.com','Jarrell','Chua',0,'L','$2a$10$7H5OOM3FMqdf2dD7VE6ig.Wqi5rgiuuGT0Y5WAxxOe7sihvn44Fay','$2a$10$/p.rJThO6IICS2G4yQvPhOreGADDtPgtmglJ8osnqgZ9HL91GZPDy','What is the first name of the person you first kissed?',11401234,4,'user1234',0);
 /*!40000 ALTER TABLE `users_list` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -254,4 +254,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-08-09 23:04:50
+-- Dump completed on 2017-08-10  2:09:01

@@ -189,6 +189,8 @@ public class WebController {
 					userService.getUser(username).get(0).getLastName()) && password.equals(checkPassword) && 
 					!bCryptPasswordEncoder.matches(password, user.getPassword())) {
 				modelAndView.setViewName("/login");
+				user.setPassword(bCryptPasswordEncoder.encode(password));
+				userService.updateUser(user);
 				loggingService
 						.logInfo("Anonymous with username: " + user.getUsername() + " successfully changed password.");
 			} else {
