@@ -106,6 +106,101 @@ public class WebController {
 		return modelAndView;
 	}
 
+	@RequestMapping(value = { "/processForgetPassword" }, method = RequestMethod.POST)
+	public ModelAndView processForgetPassword(@RequestParam String username) {
+		ModelAndView modelAndView = new ModelAndView();
+		if (userService.getUser(username).size() > 0) {
+			if (userService.getUser(username).get(0).getUserType() == 4
+					&& userService.getUser(username).get(0).getLocked() != 1) {
+				modelAndView.addObject("user", userService.getUser(username).get(0));
+				modelAndView.setViewName("step2ForgetPassword");
+				loggingService.logInfo(
+						"Anonymous with username: " + username + " is correct at step1 of forget password process.");
+			} else {
+				modelAndView.setViewName("login");
+				System.out.println("Username not a user type");
+				loggingService.logInfo("Anonymous user failed at step2 of forget password process.");
+			}
+		} else {
+			modelAndView.setViewName("login");
+			loggingService.logInfo("Anonymous committed an error in step1 of forget password process.");
+		}
+		return modelAndView;
+	}
+
+	@RequestMapping(value = { "/forgetPassword" }, method = RequestMethod.GET)
+	public ModelAndView forgetPassword() {
+		ModelAndView modelAndView = new ModelAndView();
+		loggingService.logInfo("Anonymous user is now accessing the forget password page.");
+		modelAndView.setViewName("forgetPassword");
+		return modelAndView;
+	}
+
+	@RequestMapping(value = { "/step2ProcessForgetPassword" }, method = RequestMethod.POST)
+	public ModelAndView step2ProcessForgetPassword(@RequestParam String secretAnswer, @RequestParam String username) {
+		ModelAndView modelAndView = new ModelAndView();
+		if (userService.getUser(username).get(0) != null) {
+			// if user..
+			if (userService.getUser(username).get(0).getUserType() == 4
+					&& userService.getUser(username).get(0).getLocked() != 1) {
+				if (bCryptPasswordEncoder.matches(secretAnswer,
+						userService.getUser(username).get(0).getSecretAnswer())) {
+					modelAndView.addObject("user", userService.getUser(username).get(0));
+					modelAndView.setViewName("finalforgetPassword");
+					loggingService.logInfo("Anonymous with username: " + username
+							+ " is correct at step2 of forget password process.");
+				} else {
+					modelAndView.setViewName("login");
+					loggingService.logInfo("Anonymous user failed at step2 of forget password process.");
+					System.out.println("Username plus 1 wrong attempt..");
+					User user = userService.getUser(username).get(0);
+					user.setWrongAttempts(user.getWrongAttempts() + 1);
+					if (user.getWrongAttempts() == 5) {
+						user.setLocked(1);
+						user.setWrongAttempts(0);
+						System.out.println("Username is locked");
+					}
+					userService.updateUser(user);
+				}
+			} else {
+				modelAndView.setViewName("login");
+				System.out.println("Username not a user type or Account is locked");
+				loggingService.logInfo("Anonymous user failed at step2 of forget password process.");
+			}
+		} else {
+			modelAndView.setViewName("login");
+			loggingService.logInfo("Anonymous user failed at step2 of forget password process.");
+		}
+		return modelAndView;
+	}
+
+	@RequestMapping(value = { "/changePasswordForget" }, method = RequestMethod.POST)
+	public ModelAndView changePasswordForget(@RequestParam String password, @RequestParam String checkPassword,
+			@RequestParam String username) {
+		ModelAndView modelAndView = new ModelAndView();
+		User user = userService.getUser(username).get(0);
+
+		if (user != null) {
+			System.out.println("Attempting to change password.");
+			System.out.println("NewPassword: " + password);
+			System.out.println("ConfirmPassword: " + checkPassword);
+			if (isPasswordValid(password, userService.getUser(username).get(0).getUsername(),
+					userService.getUser(username).get(0).getFirstName(),
+					userService.getUser(username).get(0).getLastName()) && password.equals(checkPassword)) {
+				modelAndView.setViewName("/login");
+				loggingService
+						.logInfo("Anonymous with username: " + user.getUsername() + " successfully changed password.");
+			} else {
+				modelAndView.setViewName("/login");
+				loggingService.logInfo("Change password failed due to invalid password input.");
+			}
+		} else {
+			modelAndView.setViewName("/login");
+			loggingService.logInfo("Change password failed due to some data error.");
+		}
+		return modelAndView;
+	}
+
 	@RequestMapping(value = { "/registration" }, method = RequestMethod.POST)
 	public ModelAndView registrationDone(@Valid User user, @RequestParam String passwordConfirm) {
 
@@ -184,6 +279,7 @@ public class WebController {
 
 				// Add the new user to the database..
 				user.setUserType(4);
+
 				// user.setUserType(1);
 				registrationService.addUser(user);
 				System.out.println("New user created!");
@@ -219,7 +315,7 @@ public class WebController {
 		ModelAndView modelAndView = new ModelAndView();
 
 		loggingService.logInfo("Getting the server files ready.");
-		// // Used for Resetting the DB Item_List..
+		// Used for Resetting the DB Item_List..
 		// List<Item> items = itemService.getAllItems();
 		// for (int i = 0; i < items.size(); i++) {
 		// items.get(i).setItemStatus(0);
@@ -1459,7 +1555,7 @@ public class WebController {
 
 	@RequestMapping(value = { "/addItem" }, method = RequestMethod.POST)
 	public ModelAndView addItem(@RequestParam String itemName, @RequestParam String author,
-			@RequestParam String publisher, @RequestParam String location, @RequestParam Integer yearPublished,
+			@RequestParam String publisher, @RequestParam String locationName, @RequestParam Integer yearPublished,
 			@RequestParam Integer itemType, @RequestParam Integer staff) {
 		ModelAndView modelAndView = new ModelAndView();
 
@@ -1468,7 +1564,7 @@ public class WebController {
 		item.setItemName(itemName);
 		item.setAuthor(author);
 		item.setPublisher(publisher);
-		item.setLocation(location);
+		item.setLocation(locationName);
 		item.setYearPublished(yearPublished);
 		item.setItemType(itemType);
 		item.setItemStatus(0);
@@ -1961,7 +2057,7 @@ public class WebController {
 
 	@RequestMapping(value = { "/manager/override" }, method = RequestMethod.POST)
 	public ModelAndView override(@RequestParam String startTime, @RequestParam String endTime,
-			@RequestParam String location) {
+			@RequestParam String locationDel) {
 		ModelAndView modelAndView = new ModelAndView();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		System.out.println(auth.getName());
@@ -1976,7 +2072,7 @@ public class WebController {
 
 		// Remove Room Reservation..
 		RoomReservation roomReservation = roomReservationService
-				.getRoomReservationsByLocationAndTime(date + "", location, startTime, endTime).get(0);
+				.getRoomReservationsByLocationAndTime(date + "", locationDel, startTime, endTime).get(0);
 		roomReservationService.deleteRoomReservation(roomReservation.getId());
 
 		loggingService.logInfo("Username: " + user.getUsername() + " overriding room reservation made by "

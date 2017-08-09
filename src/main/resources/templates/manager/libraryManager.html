@@ -40,7 +40,7 @@
 		$("#author").val(author);
 		$("#publisher").val(publisher);
 		$("#yearPublished").val(yearPublished);
-		$("#locationName").val(location);
+		$("#location").val(location);
 
 		if (itemType == 0) {
 			$("#itemType").val('Book');
@@ -55,15 +55,15 @@
 
 	function sendDeleteRoom(location, startTime, endTime) {
 		if (location == 1) {
-			$("#location").val("RoomNumber1");
+			$("#locationDel").val("RoomNumber1");
 		} else if (location == 2) {
-			$("#location").val("RoomNumber2");
+			$("#locationDel").val("RoomNumber2");
 		} else if (location == 3) {
-			$("#location").val("RoomNumber3");
+			$("#locationDel").val("RoomNumber3");
 		} else if (location == 4) {
-			$("#location").val("RoomNumber4");
+			$("#locationDel").val("RoomNumber4");
 		} else if (location == 5) {
-			$("#location").val("RoomNumber5");
+			$("#locationDel").val("RoomNumber5");
 		}
 		$("#startTime").val(startTime);
 		$("#endTime").val(endTime);
@@ -82,7 +82,7 @@
 			type="hidden" name="staff" id="staff" value="0" />
 	</form>
 	<form id="deleteRoom" th:action="@{/manager/override}" method="POST">
-		<input type="hidden" name="location" id="location" /> <input
+		<input type="hidden" name="locationDel" id="locationDel" /> <input
 			type="hidden" name="startTime" id="startTime" /> <input
 			type="hidden" name="endTime" id="endTime" />
 	</form>
@@ -175,7 +175,7 @@
 												<br> </br> <Label>Year Published: &nbsp</Label> <input
 													type="text" id="yearPublished" name="yearPublished" /> <br>
 												</br> <Label>Location: &nbsp</Label> <input type="text"
-													id="locationName" name="locationName" /> <br> </br> <Label>ItemType:
+													id="location" name="location" /> <br> </br> <Label>ItemType:
 													&nbsp</Label> <input type="text" id="itemType" name="itemType" />
 												<input type="hidden" name="staff" id="staff" value="0" />
 											</div>
@@ -232,7 +232,7 @@
 			<form id="addItem" th:action="@{/addItem}" method="POST">
 				<label>Item Name: &nbsp</label> <input type="text" id="itemName"
 					name="itemName"></input> <label>Location: &nbsp</label> <input
-					type="text" id="location" name="location"></input> <label>Author:
+					type="text" id="locationName" name="locationName"></input> <label>Author:
 					&nbsp</label> <input type="text" id="author" name="author"></input> <br>
 				</br> <label>Publisher: &nbsp&nbsp&nbsp</label> <input id="publisher"
 					type="text" name="publisher"></input> <label>Year

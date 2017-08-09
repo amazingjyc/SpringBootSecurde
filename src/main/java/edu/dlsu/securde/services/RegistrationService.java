@@ -15,47 +15,49 @@ import edu.dlsu.securde.repositories.UserRepository;
 
 @Service
 public class RegistrationService {
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private RoleRepository roleRepository;
-	
+
 	@Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-	
-	public void addUser(User user){
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+	public void addUser(User user) {
 		
-		//Role is USER
-		if(user.getUserType()==4){
+		// Role is USER
+		if (user.getUserType() == 4) {
 			user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-			 Role userRole = roleRepository.findByRole("USER");
-		     user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
+			user.setSecretAnswer(bCryptPasswordEncoder.encode(user.getSecretAnswer()));
+			Role userRole = roleRepository.findByRole("USER");
+			user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
 		}
 		// Role is Manager
-		else if(user.getUserType()==2){
+		else if (user.getUserType() == 2) {
 			user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-			 Role userRole = roleRepository.findByRole("MANAGER");
-		     user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
+			Role userRole = roleRepository.findByRole("MANAGER");
+			user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
 		}
 		// Role is Staff
-		else if(user.getUserType()==3){
+		else if (user.getUserType() == 3) {
 			user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-			 Role userRole = roleRepository.findByRole("STAFF");
-		     user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
+			Role userRole = roleRepository.findByRole("STAFF");
+			user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
 		} // Role is ADMIN
-		else if(user.getUserType()==1){
+		else if (user.getUserType() == 1) {
 			user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-			 Role userRole = roleRepository.findByRole("ADMIN");
-		     user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
+			user.setSecretAnswer(bCryptPasswordEncoder.encode(user.getSecretAnswer()));
+			Role userRole = roleRepository.findByRole("ADMIN");
+			user.setRoles(new HashSet<Role>(Arrays.asList(userRole)));
 		}
 		userRepository.save(user);
 	}
-	
-	public List<User> checkExistingUser(String name){
+
+	public List<User> checkExistingUser(String name) {
 		List<User> checkUser = userRepository.findExistingUser(name);
 		return checkUser;
 	}
-	
+
 }

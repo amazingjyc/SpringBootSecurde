@@ -1,2 +1,15 @@
+Accounts:
+
+1. Admin
 admin123
 adminPassword123
+Secret
+
+2. Managers
+
+3. Staff
+
+4. Users
+user1234
+password1234!
+No one
