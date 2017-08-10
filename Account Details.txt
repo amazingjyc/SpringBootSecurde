@@ -6,6 +6,8 @@ adminPassword123
 Secret
 
 2. Managers
+manager1234
+iamtheboss1234!
 
 3. Staff
 
@@ -13,3 +15,7 @@ Secret
 user1234
 Password1234!
 secret
+
+test1234
+some1234!
+No one
